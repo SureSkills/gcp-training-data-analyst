@@ -1,0 +1,130 @@
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set zone = properties["zone"] %}
+{% set appregion = properties["appregion"] %}
+{% set sourcebucket = properties["sourcebucket"] %}
+{% set region = properties["region"] %}
+
+resources:
+- type: compute.v1.instance
+  name: lab-vm-{{ deployment }}
+  properties:
+    zone: {{ zone }}
+    machineType: https://www.googleapis.com/compute/v1/projects/{{ project }}/zones/{{ zone }}/machineTypes/n1-standard-2
+    serviceAccounts:
+      - email: {{ project }}@{{ project }}.iam.gserviceaccount.com
+        scopes:
+        - https://www.googleapis.com/auth/cloud-platform    
+    metadata:
+      items:
+      # For more ways to use startup scripts on an instance, see:
+      #   https://cloud.google.com/compute/docs/startupscript        
+      - key: startup-script
+        value: |
+          #!/bin/bash
+          export PROJECT_ID=$(gcloud info --format='value(config.project)')
+          export BUCKET=$PROJECT_ID-credentials
+          export ZONE={{ zone }}
+          export APPREGION={{ appregion }}
+          export SBUCKET={{ sourcebucket }}
+          export REGION={{ region }}
+          echo PROJECT ID: $PROJECT_ID
+          echo BUCKET:     $BUCKET
+          echo ZONE:       $ZONE
+          echo APPREGION:  $APPREGION
+          echo SBUCKET:    $SBUCKET
+          echo REGION:     $REGION
+                    # 
+          # Install kubectl
+          #
+          apt update 
+          apt install -y apt-transport-https
+          curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+          echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+          apt update
+          apt install -y kubectl
+          apt install -y git 
+          #
+          export PROJECT_ID=$(gcloud info --format='value(config.project)')
+          export BUCKET=$PROJECT_ID-credentials
+          #
+          # (SQL and App Engine prep Not needed for labs 12 and 13)
+      
+          # Lab 3
+          gcloud beta runtime-config configs create frontend_cloud
+          gcloud beta runtime-config configs variables set greeting  "Hi from Runtime Config" --config-name frontend_cloud
+          #
+          # Lab 4 - Guestbook service account used in Lab 4 (Task 4) and lab 8 (task 6). Leave setup to user as role 
+          # assignmnet needs owner privilege and can't be executed using Qwiklabs account used for lab setup Deployment
+          gcloud iam service-accounts create guestbook
+          gcloud projects add-iam-policy-binding ${PROJECT_ID} --member serviceAccount:guestbook@${PROJECT_ID}.iam.gserviceaccount.com --role roles/editor
+          gcloud iam service-accounts keys create ~/service-account.json --iam-account guestbook@${PROJECT_ID}.iam.gserviceaccount.com
+          gsutil mb gs://$BUCKET
+          gsutil cp ~/service-account.json gs://$BUCKET/service-account.json
+
+          #
+          # Lab 5
+          gcloud pubsub topics create messages
+          gcloud beta pubsub subscriptions create messages-subscription-1 --topic=messages
+          gcloud pubsub topics publish messages --message "Setup: Hello!"
+          gcloud pubsub subscriptions pull --auto-ack messages-subscription-1
+          #
+          # Lab 6
+          export BUCKET=$PROJECT_ID
+          gsutil mb gs://$BUCKET
+          gsutil cp gs://{{ sourcebucket }}/*.jpg gs://$BUCKET/
+   
+          # Lab 9 - this probably not relevant to Lab 12 and 13
+          gcloud beta runtime-config configs variables set messages.endpoint "https://guestbook-service-dot-${PROJECT_ID}.appspot.com/guestbookMessages" --config-name frontend_cloud
+          #
+          
+          mkdir guestbook-service
+          mkdir guestbook-frontend
+          gsutil -m cp -r gs://{{ sourcebucket }}/13-kubernetes-monitoring/guestbook-service/ ~/
+          gsutil -m cp -r gs://{{ sourcebucket }}/13-kubernetes-monitoring/guestbook-frontend/ ~/
+          gsutil -m cp -r gs://{{ sourcebucket }}/11-spanner/kubernetes/ ~/
+
+          # Replace Ray Tsang's repo and example urls with the generated versions for this lab
+          sed -i -- "s/gcr.io\/next18\-bootcamp\-test\/guestbook\-frontend/gcr.io\/${PROJECT_ID}\/guestbook\-frontend/g" ~/guestbook-frontend/pom.xml
+          sed -i -- "s/gcr.io\/next18\-bootcamp\-test\/guestbook\-service/gcr.io\/${PROJECT_ID}\/guestbook\-service/g" ~/guestbook-service/pom.xml
+          sed -i -- "s/saturnism\/spring\-gcp\-guestbook\-service\:latest/gcr.io\/${PROJECT_ID}\/guestbook-service/g" ~/kubernetes/guestbook-service-deployment.yaml
+          sed -i -- "s/saturnism\/spring\-gcp\-guestbook\-frontend\:latest/gcr.io\/${PROJECT_ID}\/guestbook-frontend/g" ~/kubernetes/guestbook-frontend-deployment.yaml
+
+          # Cloud SQL and App Engine reconfig stuff no longer necessary. 
+          # Lab 12 and 13 - Cloud Spanner prep gsutil 
+          gcloud services enable spanner.googleapis.com
+          gcloud spanner instances create guestbook --config=regional-us-central1 --nodes=1 --description="Guestbook messages"
+          gcloud spanner databases create messages --instance=guestbook
+          gcloud spanner databases ddl update messages --instance=guestbook --ddl="$(<~/guestbook-service/db/spanner.ddl)" 
+
+          gsutil -m cp -r ~/guestbook-frontend/ gs://$BUCKET
+          gsutil -m cp -r ~/guestbook-service/ gs://$BUCKET
+          gsutil -m cp -r ~/kubernetes/ gs://$BUCKET
+          gsutil cp ~/service-account.json gs://$BUCKET/service-account.json
+
+          gcloud container clusters create guestbook-cluster --cluster-version=1.11.2-gke.18 --num-nodes=2 --machine-type=n1-standard-2 \
+          --zone us-central1-a --enable-autorepair --enable-cloud-monitoring --enable-cloud-logging 
+
+          # Make sure we have the credential for out cluster
+          export HOME=~
+          gcloud container clusters get-credentials guestbook-cluster --zone=us-central1-a
+
+          # Save the guestbook service account credential as a K8S secret
+          kubectl create secret generic guestbook-service-account --from-file=$HOME/service-account.json
+
+          
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      sizeGb: 100
+      autoDelete: true
+      initializeParams:
+        diskName: disk-{{ deployment }}
+        sourceImage: https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/family/debian-9
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/default
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT

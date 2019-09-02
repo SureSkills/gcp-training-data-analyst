@@ -1,0 +1,33 @@
+imports:
+  - path: qwiklabs.jinja
+  
+info:
+  title: Deploy Components for Java Microservices labs
+  author: qwiklabs@google.com
+  description: Deploy Components for Java Microservices labs
+
+required:
+  - zone
+  - region
+  - appregion
+  - sourcebucket
+
+properties:
+  zone:
+    type: string
+    description: Zone to create the resources in.
+    default: us-central1-a
+    x-googleProperty:
+      type: GCE_ZONE
+  region:
+    description: Region to create compute resources in.
+    type: string
+    default: us-central1
+  appregion:
+    description: Region to create App engine resources in.
+    type: string
+    default: us-central
+  sourcebucket:
+    description: Source storage bucket for code samples
+    type: string
+    default: sureskills-ql/java-microservices

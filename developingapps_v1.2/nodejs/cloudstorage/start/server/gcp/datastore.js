@@ -12,11 +12,11 @@
 // limitations under the License.
 'use strict';
 
-const Datastore = require('@google-cloud/datastore');
+const {Datastore} = require('@google-cloud/datastore');
 const config = require('../config');
 
 // [START config]
-const ds = Datastore({
+const ds = new Datastore({
   projectId: config.get('GCLOUD_PROJECT')
 });
 const kind = 'Question';
