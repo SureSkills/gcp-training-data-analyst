@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const config = require('../config');
-const Spanner = require('@google-cloud/spanner');
+const {Spanner} = require('@google-cloud/spanner');
 
-const spanner = Spanner({
+const spanner = new Spanner({
     projectID: config.get('GCLOUD_PROJECT')
 });
 

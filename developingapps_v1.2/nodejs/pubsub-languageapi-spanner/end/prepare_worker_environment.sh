@@ -27,7 +27,7 @@ node setup/add_iam_policy_to_service_account.js
 gcloud projects set-iam-policy $DEVSHELL_PROJECT_ID iam_modified.json
 
 echo "Creating Cloud Pub/Sub topic"
-gcloud beta pubsub topics create feedback
+gcloud pubsub topics create feedback
 
 echo "Creating Cloud Spanner Instance, Database, and Table"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1
