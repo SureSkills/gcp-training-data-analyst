@@ -15,13 +15,13 @@
 
 // TODO: Load the ../config module
 
-
+const config = require('../config');
 
 // END TODO
 
 // TODO: Load the @google-cloud/datastore module
 
-
+const Firestore = require('@google-cloud/firestore');
 
 // END TODO
 
@@ -30,7 +30,9 @@
 // Datastore should be used via the projectId property. 
 // The projectId is retrieved from the config module. This // module retrieves the project ID from the GCLOUD_PROJECT // environment variable.
 
-
+const ds = new Firestore({
+ projectId: config.get('GCLOUD_PROJECT')
+});
 
 
 // END TODO
@@ -40,7 +42,7 @@
 // There are two main ways of writing a key:
 // 1. Specify the kind, and let Datastore generate a unique //    numeric id
 // 2. Specify the kind and a unique string id
-
+const kind = 'Question';
 
 // END TODO
 
@@ -56,10 +58,27 @@ function create({ quiz, author, title, answer1, answer2, answer3, answer4, corre
   // TODO: Declare the entity key, 
   // with a Datastore generated id
 
-
+ const key = ds.key(kind);
 
   // END TODO
+ // TODO: Declare the entity object, with the key and data
 
+ const entity = {
+   key,
+// The entity's members are represented in a data property.
+// This is an array where each element represents one
+// member in the entity. Each element is an object with a // name and a value
+   data: [
+     { name: 'quiz', value: quiz },
+     { name: 'author', value: author },
+     { name: 'title', value: title },
+     { name: 'answer1', value: answer1 },
+     { name: 'answer2', value: answer2 },
+     { name: 'answer3', value: answer3 },
+     { name: 'answer4', value: answer4 },
+     { name: 'correctAnswer', value: correctAnswer },
+   ]
+ };
   // TODO: Declare the entity object, with the key and data
 
 
@@ -69,7 +88,7 @@ function create({ quiz, author, title, answer1, answer2, answer3, answer4, corre
   // The ds.save(...) method returns a Promise to the  
   // caller, as it runs asynchronously.
 
-
+ return ds.save(entity);
 
   // END TODO
 
