@@ -21,13 +21,13 @@ const feedbackTopic = pubsub.topic('feedback');
 const answersTopic = pubsub.topic('answers');
 
 function publishFeedback(feedback) {
-  return feedbackTopic.publish({
-    data: feedback
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(feedback))
+  return feedbackTopic.publish(dataBuffer);
 }
 
+
 function registerFeedbackNotification(cb) {
-  feedbackTopic.subscribe('feedback-subscription', { autoAck: true })
+  feedbackTopic.createSubscription('feedback-subscription', { autoAck: true })
     .then(results => {
       const subscription = results[0];
 
@@ -43,7 +43,7 @@ function registerFeedbackNotification(cb) {
 }
 
 function registerAnswerNotification(cb) {
-  answersTopic.subscribe('answer-subscription', { autoAck: true })
+  answersTopic.createSubscription('answer-subscription', { autoAck: true })
     .then(results => {
       const subscription = results[0];
 
@@ -58,10 +58,10 @@ function registerAnswerNotification(cb) {
 
 }
 
+
 function publishAnswer(answer) {
-  return answersTopic.publish({
-    data: answer
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answersTopic.publish(dataBuffer);
 }
 
 
@@ -73,3 +73,4 @@ module.exports = {
   registerAnswerNotification
 };
 // [END exports]
+
