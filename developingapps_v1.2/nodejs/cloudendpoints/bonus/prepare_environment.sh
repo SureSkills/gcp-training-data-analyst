@@ -17,7 +17,6 @@ export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
 
 echo "Creating Compute Engine instance"
 gcloud compute firewall-rules create default-allow-http --allow tcp:80 --source-ranges 0.0.0.0/0 --target-tags http-server
-gcloud compute instances create endpoint-host --zone us-central1-a --tags http-server --scopes=cloud-platform --metadata endpoints-service-name="quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog",endpoints-service-config-id="`date +%Y-%m-%d`r0" --metadata-from-file=startup-script=./setup/endpointhost_startup_script.sh
 
 echo "Creating App Engine app"
 gcloud app create --region "us-central"
@@ -29,7 +28,7 @@ echo "Installing dependencies"
 npm install
 
 echo "Installing Open API generator"
-sudo npm install -g api2swagger
+npm install -g api2swagger
 
 echo "Creating Datastore entities"
 node setup/add_entities.js
@@ -49,6 +48,14 @@ gcloud beta functions deploy process-feedback --runtime nodejs8 --trigger-topic 
 echo "Creating Cloud Endpoint"
 sed -i "s/GCLOUD_PROJECT/$GCLOUD_PROJECT/g" ./endpoint/quiz-api.json
 gcloud endpoints services deploy ./endpoint/quiz-api.json
+export SERVICEID=$(gcloud endpoints services describe quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog --format='value('serviceConfig.id')')
+
+gcloud compute instances create endpoint-host \
+  --zone us-central1-a --tags http-server --scopes=cloud-platform \
+  --metadata endpoints-service-name="quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog",endpoints-service-config-id="$SERVICEID" \
+  --metadata-from-file=startup-script=./setup/endpointhost_startup_script.sh
+
+sleep 30
 
 echo "Copying source to Compute Engine"
 gcloud compute scp --force-key-file-overwrite --quiet --recurse ./endpoint/quiz-api endpoint-host:~/ --zone us-central1-a
