@@ -27,7 +27,7 @@ function publishFeedback(feedback) {
 
 
 function registerFeedbackNotification(cb) {
-  feedbackTopic.createSubscription('feedback-subscription', { autoAck: true })
+  feedbackTopic.subscribe('feedback-subscription', { autoAck: true })
     .then(results => {
       const subscription = results[0];
 
@@ -43,7 +43,7 @@ function registerFeedbackNotification(cb) {
 }
 
 function registerAnswerNotification(cb) {
-  answersTopic.createSubscription('answer-subscription', { autoAck: true })
+  answersTopic.subscribe('answer-subscription', { autoAck: true })
     .then(results => {
       const subscription = results[0];
 
