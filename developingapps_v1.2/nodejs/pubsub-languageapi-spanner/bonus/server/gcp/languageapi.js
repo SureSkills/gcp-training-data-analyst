@@ -11,11 +11,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const config = require('../config');
-const {Language} = require('@google-cloud/language');
+ const Language = require('@google-cloud/language');
 
-const language = new Language({
-    projectID: config.get('GCLOUD_PROJECT')
-});
+const language = new Language.LanguageServiceClient({
+    projectId: config.get('GCLOUD_PROJECT')});
+//const language = Language({
+  //  projectID: config.get('GCLOUD_PROJECT')
+//});
 
 
 function analyze(text) {

@@ -20,6 +20,9 @@ export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID
 echo "Installing dependencies"
 npm install
 
+echo "To exporting Cloud Storage"
+export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
+
 echo "Creating Datastore entities"
 node setup/add_entities.js
 
