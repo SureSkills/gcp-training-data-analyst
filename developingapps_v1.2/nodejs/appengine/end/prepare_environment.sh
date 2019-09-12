@@ -25,7 +25,7 @@ echo "Making bucket: gs://$GCLOUD_BUCKET"
 gsutil mb gs://$GCLOUD_BUCKET
 
 echo "Installing dependencies"
-npm install
+npm install npm@latest -g
 
 echo "Creating Datastore entities"
 node setup/add_entities.js
