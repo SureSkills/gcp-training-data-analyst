@@ -25,7 +25,8 @@ echo "Making bucket: gs://$GCLOUD_BUCKET"
 gsutil mb gs://$GCLOUD_BUCKET
 
 echo "Installing dependencies"
-npm install
+npm install npm -g
+npm update
 
 echo "Installing Open API generator"
 npm install -g api2swagger
@@ -61,7 +62,7 @@ echo "Copying source to Compute Engine"
 gcloud compute scp --force-key-file-overwrite --quiet --recurse ./endpoint/quiz-api endpoint-host:~/ --zone us-central1-a
 
 echo "Installing and running Cloud Endpoint backend"
-gcloud compute ssh endpoint-host --command "cd ~/quiz-api && export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && npm install && npm start"
+gcloud compute ssh endpoint-host --zone us-central1-a --command "cd ~/quiz-api && export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && sudo npm install npm -g && sudo npm update && npm start"
 
 echo "To complete setup, generate an API key and apply key=<API_KEY> to the end of the Cloud Endpoint"
 echo "Project ID: $DEVSHELL_PROJECT_ID"
