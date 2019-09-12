@@ -10,8 +10,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-const Language = require('@google-cloud/language');
-const language = Language();
+const {Language} = require('@google-cloud/language');
+const language = new Language();
 function analyze(text) {
     const document = {
         content: text,
