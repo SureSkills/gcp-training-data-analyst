@@ -58,16 +58,16 @@ gcloud compute instances create endpoint-host \
 
 sleep 30
 
-echo "Creating Cloud Endpoint"
-sed -i "s/GCLOUD_PROJECT/$GCLOUD_PROJECT/g" ./endpoint/quiz-api.json
-gcloud endpoints services deploy ./endpoint/quiz-api.json
-export SERVICEID=$(gcloud endpoints services describe quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog --format='value('serviceConfig.id')')
+//echo "Creating Cloud Endpoint"
+//sed -i "s/GCLOUD_PROJECT/$GCLOUD_PROJECT/g" ./endpoint/quiz-api.json
+//gcloud endpoints services deploy ./endpoint/quiz-api.json
+//export SERVICEID=$(gcloud endpoints services describe quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog --format='value('serviceConfig.id')')
 
 echo "Copying source to Compute Engine"
 gcloud compute scp --force-key-file-overwrite --quiet --recurse ./endpoint/quiz-api endpoint-host:~/ --zone us-central1-a
 
 echo "Installing and running Cloud Endpoint backend"
-gcloud compute ssh endpoint-host --zone us-central1-a --command "cd ~/quiz-api && export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && sudo npm install npm -g && sudo npm update && npm start"
+gcloud compute ssh endpoint-host --zone us-central1-a --command "export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && cd ~/quiz-api && sudo npm install npm -g && sudo npm update && npm start"
 
 echo "To complete setup, generate an API key and apply key=<API_KEY> to the end of the Cloud Endpoint"
 echo "Project ID: $DEVSHELL_PROJECT_ID"
