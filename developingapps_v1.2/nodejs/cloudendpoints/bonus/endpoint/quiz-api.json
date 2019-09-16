@@ -7,6 +7,9 @@
       "in": "query"
     }
   },
+  "x-google-endpoints": [ {
+      "name": "quiz-api.endpoints.GCLOUD_PROJECT.cloud.goog",
+      "target": "10.10.10.10" } ],
   "host": "quiz-api.endpoints.GCLOUD_PROJECT.cloud.goog",
   "schemes": [
     "https",

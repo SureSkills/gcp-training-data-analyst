@@ -58,6 +58,11 @@ gcloud compute instances create endpoint-host \
 
 sleep 30
 
+echo "Creating Cloud Endpoint"
+sed -i "s/GCLOUD_PROJECT/$GCLOUD_PROJECT/g" ./endpoint/quiz-api.json
+gcloud endpoints services deploy ./endpoint/quiz-api.json
+export SERVICEID=$(gcloud endpoints services describe quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog --format='value('serviceConfig.id')')
+
 echo "Copying source to Compute Engine"
 gcloud compute scp --force-key-file-overwrite --quiet --recurse ./endpoint/quiz-api endpoint-host:~/ --zone us-central1-a
 
