@@ -42,9 +42,9 @@ gcloud spanner instances create quiz-instance --config=regional-us-central1 --de
 gcloud spanner databases create quiz-database --instance quiz-instance --ddl "CREATE TABLE Feedback ( feedbackId STRING(100) NOT NULL, email STRING(100), quiz STRING(20), feedback STRING(MAX), rating INT64, score FLOAT64, timestamp INT64 ) PRIMARY KEY (feedbackId);"
 
 echo "Enabling Cloud Functions API"
-gcloud beta services enable cloudfunctions.googleapis.com
+gcloud services enable cloudfunctions.googleapis.com
 echo "Creating Cloud Function"
-gcloud beta functions deploy process-feedback --runtime nodejs8 --trigger-topic feedback --source ./function --stage-bucket $GCLOUD_BUCKET --entry-point subscribe
+gcloud functions deploy process-feedback --runtime nodejs8 --trigger-topic feedback --source ./function --stage-bucket $GCLOUD_BUCKET --entry-point subscribe --quiet
 
 echo "Creating Cloud Endpoint"
 sed -i "s/GCLOUD_PROJECT/$GCLOUD_PROJECT/g" ./endpoint/quiz-api.json
@@ -58,16 +58,26 @@ gcloud compute instances create endpoint-host \
 
 sleep 30
 
-//echo "Creating Cloud Endpoint"
-//sed -i "s/GCLOUD_PROJECT/$GCLOUD_PROJECT/g" ./endpoint/quiz-api.json
-//gcloud endpoints services deploy ./endpoint/quiz-api.json
-//export SERVICEID=$(gcloud endpoints services describe quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog --format='value('serviceConfig.id')')
+echo "Updating Cloud Endpoint"
+export EXTERNAL_IP=$(gcloud compute instances describe endpoint-host --zone=us-central1-a --format='value(networkInterfaces[0].accessConfigs[0].natIP)')
+sed -i "s/10\.10\.10\.10/$EXTERNAL_IP/g" ./endpoint/quiz-api.json
+gcloud endpoints services deploy ./endpoint/quiz-api.json
+
+export SERVICEID=$(gcloud endpoints services describe quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog --format='value('serviceConfig.id')')
+
+gcloud compute instances add-metadata endpoint-host --zone us-central1-a \
+  --metadata endpoints-service-name="quiz-api.endpoints.$GCLOUD_PROJECT.cloud.goog",endpoints-service-config-id="$SERVICEID"
 
 echo "Copying source to Compute Engine"
 gcloud compute scp --force-key-file-overwrite --quiet --recurse ./endpoint/quiz-api endpoint-host:~/ --zone us-central1-a
 
 echo "Installing and running Cloud Endpoint backend"
 gcloud compute ssh endpoint-host --zone us-central1-a --command "export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && cd ~/quiz-api && sudo npm install npm -g && sudo npm update && npm start"
+
+// Create API key
+// Reset endpoint VM
+// gcloud compute instances reset  endpoint-host --zone us-central1-a  --quiet
+// gcloud compute ssh endpoint-host --zone us-central1-a --command "export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && cd ~/quiz-api && npm start"
 
 echo "To complete setup, generate an API key and apply key=<API_KEY> to the end of the Cloud Endpoint"
 echo "Project ID: $DEVSHELL_PROJECT_ID"
