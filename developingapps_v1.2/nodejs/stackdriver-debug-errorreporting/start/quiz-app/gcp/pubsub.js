@@ -11,22 +11,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const config = require('../config');
-const Pubsub = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 
-const pubsub = Pubsub({
+const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 
 const topic = pubsub.topic('feedback');
 
 function publishFeedback(feedback) {
-  return topic.publish({
-    data: feedback
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(feedback))
+  return topic.publish(dataBuffer);
+
 }
 
 function registerFeedbackNotification(cb) {
-  topic.subscribe('worker-subscription', { autoAck: true })
+  topic.createSubscription('worker-subscription', { autoAck: true })
   .then(results => {
   const subscription = results[0];
 
