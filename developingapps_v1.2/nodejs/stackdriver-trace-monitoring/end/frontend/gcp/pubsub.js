@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const config = require('../config');
-const Pubsub = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 
-const pubsub = Pubsub({
+const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 
@@ -21,15 +21,13 @@ const feedbackTopic = pubsub.topic('feedback');
 const answersTopic = pubsub.topic('answers');
 
 function publishFeedback(feedback) {
-  return feedbackTopic.publish({
-    data: feedback
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(feedback))
+  return feedbackTopic.publish(dataBuffer);
 }
 
 function publishAnswer(answer) {
-  return answersTopic.publish({
-    data: answer
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answersTopic.publish(dataBuffer);
 }
 
 // [START exports]

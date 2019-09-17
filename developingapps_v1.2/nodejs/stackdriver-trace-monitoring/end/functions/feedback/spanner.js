@@ -10,9 +10,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-const Spanner = require('@google-cloud/spanner');
+const {Spanner} = require('@google-cloud/spanner');
 
-const spanner = Spanner();
+const spanner = new Spanner();
 
 const instance = spanner.instance('quiz-instance');
 const database = instance.database('quiz-database');

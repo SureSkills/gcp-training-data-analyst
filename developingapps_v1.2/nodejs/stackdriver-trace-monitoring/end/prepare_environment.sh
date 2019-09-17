@@ -23,7 +23,8 @@ export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
 export NODE_ENV=production
 
 echo "Installing dependencies"
-npm install
+npm install -g npm@6.11.3
+npm update
 
 echo "Creating Datastore entities"
 node setup/add_entities.js
