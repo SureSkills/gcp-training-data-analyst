@@ -14,7 +14,7 @@
 'use strict';
 require('@google-cloud/debug-agent').start({ allowExpressions: true });
 const {ErrorReporting} = require(
-       '@google-cloud/error-reporting').ErrorReporting;
+       '@google-cloud/error-reporting');
 
 const path = require('path');
 const express = require('express');
