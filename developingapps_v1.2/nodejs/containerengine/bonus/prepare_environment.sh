@@ -22,7 +22,7 @@ echo "Making bucket: gs://$GCLOUD_BUCKET"
 gsutil mb gs://$GCLOUD_BUCKET
 
 echo "Installing dependencies"
-npm install npm -g
+npm install -g npm@6.11.3
 npm update
 
 echo "Creating Datastore entities"
