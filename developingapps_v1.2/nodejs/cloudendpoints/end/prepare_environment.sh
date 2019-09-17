@@ -26,7 +26,7 @@ echo "Making bucket: gs://$GCLOUD_BUCKET"
 gsutil mb gs://$GCLOUD_BUCKET
 
 echo "Installing dependencies"
-npm install npm -g
+npm install -g npm@6.11.3
 npm update
 
 echo "Installing Open API generator"
@@ -61,6 +61,6 @@ gcloud compute scp --recurse ./endpoint/quiz-api endpoint-host:~/
 
 
 echo "Installing and running Cloud Endpoint backend"
-gcloud compute ssh endpoint-host --command "export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && cd ~/quiz-api && sudo npm install npm -g && sudo npm update && npm start"
+gcloud compute ssh endpoint-host --command "export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && cd ~/quiz-api && sudo npm install -g npm@6.11.3 && sudo npm update && npm start"
 
 echo "Project ID: $DEVSHELL_PROJECT_ID"

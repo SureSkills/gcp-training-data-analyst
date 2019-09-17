@@ -22,7 +22,8 @@ export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID
 export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
 
 echo "Installing dependencies"
-npm install
+npm install -g npm@6.11.3
+npm update
 
 echo "Installing Open API generator"
 npm install -g api2swagger
