@@ -1,5 +1,5 @@
 # Installs nodejs, downloads source from git, installs ESP, runs app
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 export CLOUD_ENDPOINTS_REPO="google-cloud-endpoints-jessie"
