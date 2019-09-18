@@ -31,8 +31,8 @@ const path = require('path');
 const express = require('express');
 const scores = require('./gcp/spanner');
 
-const ErrorReporting = require('@google-cloud/error-reporting');
-const errorReporting = ErrorReporting({
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+const errorReporting = new ErrorReporting({
 	projectId: config.get('GCLOUD_PROJECT')
 });
 
