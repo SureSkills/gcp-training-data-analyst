@@ -10,67 +10,43 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+'use strict';
+
 const config = require('../config');
 const {PubSub} = require('@google-cloud/pubsub');
 
-const pubsub = new PubSub({
-  projectId: config.get('GCLOUD_PROJECT')
-});
+const GCLOUD_PROJECT = config.get('GCLOUD_PROJECT');
 
-const feedbackTopic = pubsub.topic('feedback');
-const answersTopic = pubsub.topic('answers');
+const pubsub = new PubSub({GCLOUD_PROJECT});
+const topic = pubsub.topic('feedback');
+const subscription = pubsub.subscription('worker-subscription');
 
 function publishFeedback(feedback) {
-  const dataBuffer=Buffer.from(JSON.stringify(feedback))
-  return feedbackTopic.publish(dataBuffer);
+  return topic.publish({
+    data: feedback,
+  });
 }
-
 
 function registerFeedbackNotification(cb) {
-  feedbackTopic.subscribe('feedback-subscription', { autoAck: true })
-    .then(results => {
-      const subscription = results[0];
+  subscription.on('message', cb);
 
-      subscription.on('message', message => {
-        cb(message.data);
-      });
-
-      subscription.on('error', err => {
-        console.error(err);
-      });
-    });
+  subscription.on('error', err => {
+    console.error(err);
+  });
 
 }
-
-function registerAnswerNotification(cb) {
-  answersTopic.subscribe('answer-subscription', { autoAck: true })
-    .then(results => {
-      const subscription = results[0];
-
-      subscription.on('message', message => {
-        cb(message.data);
-      });
-
-      subscription.on('error', err => {
-        console.error(err);
-      });
-    });
-
-}
-
 
 function publishAnswer(answer) {
-  const dataBuffer=Buffer.from(JSON.stringify(answer))
-  return answersTopic.publish(dataBuffer);
+  return answersTopic.publish({
+    data: answer
+  });
 }
-
 
 // [START exports]
 module.exports = {
-  publishAnswer,
   publishFeedback,
+  publishAnswer,
   registerFeedbackNotification,
-  registerAnswerNotification
 };
 // [END exports]
-
