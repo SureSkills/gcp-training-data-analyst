@@ -23,15 +23,14 @@ const topic = pubsub.topic('feedback');
 const subscription = pubsub.subscription('worker-subscription');
 
 function publishFeedback(feedback) {
-  return topic.publish({
-    data: feedback,
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(feedback))
+  return topic.publish(dataBuffer);
 }
 
 function registerFeedbackNotification(cb) {
-  subscription.on('message', message => {
-    message.ack()
-    cb(message.data);
+  topic.createSubscription('worker-subscription', { autoAck: true })
+  .then(results => {
+  const subscription = results[0];
   });
 
   subscription.on('error', err => {

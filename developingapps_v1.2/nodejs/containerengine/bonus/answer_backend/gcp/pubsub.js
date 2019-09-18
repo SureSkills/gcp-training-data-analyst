@@ -21,7 +21,7 @@ const topic = pubsub.topic('answers');
 
 
 function registerAnswerNotification(cb) {
-  topic.subscribe('answer-subscription', { autoAck: true })
+  topic.createSubscription('worker-subscription', { autoAck: true })
   .then(results => {
   const subscription = results[0];
 
