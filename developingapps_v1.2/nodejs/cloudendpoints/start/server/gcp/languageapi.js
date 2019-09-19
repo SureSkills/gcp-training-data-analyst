@@ -14,7 +14,7 @@ const config = require('../config');
 const Language = require('@google-cloud/language');
 
 const language = new Language.LanguageServiceClient({
-    projectID: config.get('GCLOUD_PROJECT')
+    projectId: config.get('GCLOUD_PROJECT')
 });
 
 

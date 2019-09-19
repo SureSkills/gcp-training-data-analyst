@@ -17,33 +17,60 @@ const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 
-const topic = pubsub.topic('feedback');
+const feedbackTopic = pubsub.topic('feedback');
+const answersTopic = pubsub.topic('answers');
 
 function publishFeedback(feedback) {
-  return topic.publish({
-    data: feedback
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(feedback))
+  return feedbackTopic.publish(dataBuffer);
 }
+
 
 function registerFeedbackNotification(cb) {
-  topic.subscribe('worker-subscription', { autoAck: true })
-  .then(results => {
-  const subscription = results[0];
+    const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true })
+    feedbackSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
 
-  subscription.on('message', message => {
-    cb(message.data);
-  });
-
-  subscription.on('error', err => {
-    console.error(err);
-  });
-});
+        subscription.on('error', err => {
+            console.error(err);
+        });
+    });
 
 }
+
+function registerAnswerNotification(cb) {
+    const answerSubscription=answersTopic.subscription('answer-subscription', { autoAck: true })
+    answerSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
+
+        subscription.on('error', err => {
+            console.error(err);
+        });
+    });
+    
+}
+
+
+function publishAnswer(answer) {
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answersTopic.publish(dataBuffer);
+}
+
 
 // [START exports]
 module.exports = {
+  publishAnswer,
   publishFeedback,
-  registerFeedbackNotification
+  registerFeedbackNotification,
+  registerAnswerNotification
 };
 // [END exports]
+
