@@ -18,13 +18,14 @@ console.log('Worker starting...');
 
 function feedbackHandler(message) {
     console.log('Feedback received');
-    console.log(message);
+    var messageData = JSON.parse(message.toString());
+    console.log(messageData);
 
-    languageAPI.analyze(message.data.feedback)
+    languageAPI.analyze(messageData.feedback)
     .then(score => {
       console.log(`Score: ${score}`);
-      message.data.score = score;
-      return message.data;
+      messageData.score = score;
+      return messageData;
     })
     .then(storage.saveFeedback)
     .then(() => {
@@ -36,9 +37,10 @@ function feedbackHandler(message) {
 
 function answerHandler(message) {
     console.log('Answer received');
-    console.log(message);
+    var messageData = JSON.parse(message.toString());
+    console.log(messageData);
 
-    storage.saveAnswer(message.data)
+    storage.saveAnswer(messageData)
     .then(() => {
         console.log('Answer saved');	
     });

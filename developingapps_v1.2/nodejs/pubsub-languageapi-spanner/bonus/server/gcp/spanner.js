@@ -22,7 +22,7 @@ const database = instance.database('quiz-database');
 const table = database.table('feedback');
 const answersTable = database.table('answers');
 
-function saveAnswer(
+async function saveAnswer(
     { id, email, quiz, timestamp, correct, answer }) {
     const record = {
         answerId: `${quiz}_${email}_${id}_${timestamp}`,
@@ -34,7 +34,18 @@ function saveAnswer(
         answer
     };
     console.log('Answer saved');
-    return answersTable.insert(record);
+
+    try {
+        await answersTable.insert(record);
+        console.log('Inserted Answer Record');
+    } catch (err) {
+        if (err.code === 6 ) {
+            // console.log("Duplicate answer message");
+        } else {
+            console.error('ERROR processing answer:', err);
+        }
+    }
+
 }
 
 function getLeaderboard() {
@@ -51,7 +62,7 @@ ORDER BY quiz, score DESC`;
     });
 }
 
-function saveFeedback(
+async function saveFeedback(
     { email, quiz, timestamp, rating, feedback, score }) {
     const rev_email = email
         .replace(/[@\.]/g, '_')
@@ -64,10 +75,21 @@ function saveFeedback(
         quiz,
         timestamp,
         rating,
-        score: spanner.float(score),
+        score: Spanner.float(score),
         feedback,
     };
-    return table.insert(record);
+
+    try {
+        await table.insert(record);
+        console.log('Inserted Feedback Record');
+    } catch (err) {
+        if (err.code === 6 ) {
+            // console.log("Duplicate feedback message");
+        } else {
+            console.error('ERROR processing feedback:', err);
+        }
+    }
+
 }
 
 

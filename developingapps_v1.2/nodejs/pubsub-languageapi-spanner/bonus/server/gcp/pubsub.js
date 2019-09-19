@@ -27,35 +27,35 @@ function publishFeedback(feedback) {
 
 
 function registerFeedbackNotification(cb) {
-  feedbackTopic.subscribe('feedback-subscription', { autoAck: true })
-    .then(results => {
-      const subscription = results[0];
+    const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true })
+    feedbackSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
 
-      subscription.on('message', message => {
-        cb(message.data);
-      });
-
-      subscription.on('error', err => {
-        console.error(err);
-      });
+        subscription.on('error', err => {
+            console.error(err);
+        });
     });
 
 }
 
 function registerAnswerNotification(cb) {
-  answersTopic.subscribe('answer-subscription', { autoAck: true })
-    .then(results => {
-      const subscription = results[0];
+    const answerSubscription=feedbackTopic.subscription('answer-subscription', { autoAck: true })
+    answerSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
 
-      subscription.on('message', message => {
-        cb(message.data);
-      });
-
-      subscription.on('error', err => {
-        console.error(err);
-      });
+        subscription.on('error', err => {
+            console.error(err);
+        });
     });
-
+    
 }
 
 
