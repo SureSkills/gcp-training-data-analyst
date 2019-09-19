@@ -35,7 +35,7 @@ echo "Creating Datastore entities"
 node setup/add_entities.js
 
 echo "Creating Cloud Pub/Sub topic"
-gcloud beta pubsub topics create feedback
+gcloud pubsub topics create feedback
 
 echo "Creating Cloud Spanner Instance, Database, and Table"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1
@@ -74,10 +74,10 @@ gcloud compute scp --force-key-file-overwrite --quiet --recurse ./endpoint/quiz-
 echo "Installing and running Cloud Endpoint backend"
 gcloud compute ssh endpoint-host --zone us-central1-a --command "export PORT=8081 && export GCLOUD_PROJECT=$(gcloud info --format='value(config.project)') && export GCLOUD_BUCKET=$GCLOUD_PROJECT-media && cd ~/quiz-api && sudo npm install -g npm@6.11.3 && sudo npm update && npm start"
 
-// Create API key
-// Reset endpoint VM
-// gcloud compute instances reset  endpoint-host --zone us-central1-a  --quiet
-// gcloud compute ssh endpoint-host --zone us-central1-a --command "export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && cd ~/quiz-api && npm start"
+# Create API key
+# Reset endpoint VM
+# gcloud compute instances reset  endpoint-host --zone us-central1-a  --quiet
+# gcloud compute ssh endpoint-host --zone us-central1-a --command "export PORT=8081 && export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID && export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media && cd ~/quiz-api && npm start"
 
 echo "To complete setup, generate an API key and apply key=<API_KEY> to the end of the Cloud Endpoint"
 echo "Project ID: $DEVSHELL_PROJECT_ID"
