@@ -14,7 +14,7 @@
 const Compute = require('@google-cloud/compute');
 
 // Get a compute client
-const compute = Compute();
+const compute = new Compute();
 
 console.log('Listing VMs in the project:');
 

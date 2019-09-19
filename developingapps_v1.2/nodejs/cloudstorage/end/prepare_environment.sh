@@ -18,7 +18,8 @@ echo "Exporting GCLOUD_PROJECT"
 export GCLOUD_PROJECT=$DEVSHELL_PROJECT_ID
 
 echo "Installing dependencies"
-npm install
+npm install -g npm@6.11.3
+npm update
 
 echo "To exporting Cloud Storage"
 export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
