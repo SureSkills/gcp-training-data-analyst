@@ -18,7 +18,7 @@ const instance = spanner.instance('quiz-instance');
 const database = instance.database('quiz-database');
 const answersTable = database.table('answers');
 
-function saveAnswer(
+async function saveAnswer(
     {id, email, quiz, timestamp, correct, answer}) {
     const record = {
           answerId:  `${quiz}_${email}_${id}_${timestamp}`,
@@ -29,8 +29,17 @@ function saveAnswer(
           correct,
           answer   
     };
-    console.log('Saving answer');
-    return answersTable.insert(record);
+    try {
+        console.log('Saving answer');
+        await answersTable.insert(record);
+  
+    } catch (err) {
+        if (err.code === 6 ) {
+            // console.log("Duplicate answer message");
+        } else {
+            console.error('ERROR processing answer:', err);
+        }
+    }
   }
   
 

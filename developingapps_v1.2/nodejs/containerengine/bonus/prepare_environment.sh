@@ -32,6 +32,7 @@ echo "Creating Cloud Pub/Sub topics"
 gcloud pubsub topics create feedback
 gcloud pubsub subscriptions create worker-subscription --topic=feedback
 gcloud pubsub topics create answers
+gcloud pubsub subscriptions create answer-subscription --topic=answers
 
 echo "Creating Cloud Spanner Instance, Database, and Tables"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1
@@ -50,10 +51,11 @@ echo "Deploying to Container Engine"
 sed -i -e "s/\[GCLOUD_PROJECT\]/$DEVSHELL_PROJECT_ID/g" ./frontend-deployment.yaml
 sed -i -e "s/\[GCLOUD_PROJECT\]/$DEVSHELL_PROJECT_ID/g" ./backend-deployment.yaml
 sed -i -e "s/\[GCLOUD_PROJECT\]/$DEVSHELL_PROJECT_ID/g" ./answer-backend-deployment.yaml
-kubectl create -f ./frontend-deployment.yaml
-kubectl create -f ./backend-deployment.yaml
-kubectl create -f ./answer-backend-deployment.yaml
-kubectl create -f ./frontend-service.yaml
-
+kubectl apply -f ./frontend-deployment.yaml
+kubectl apply -f ./backend-deployment.yaml
+kubectl apply -f ./answer-backend-deployment.yaml
+kubectl apply -f ./frontend-service.yaml
 
 echo "Project ID: $DEVSHELL_PROJECT_ID"
+
+# echo "Frontend application URL: http://"$(kubectl get service quiz-frontend -o=JSON | jq -r ".status.loadBalancer.ingress[0].ip"):80

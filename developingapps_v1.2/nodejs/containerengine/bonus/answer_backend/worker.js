@@ -17,9 +17,10 @@ console.log('Answer worker starting...');
 
 function handler(message) {
     console.log('Message received');
-    console.log(message.data);
-
-    storage.saveAnswer(message.data)
+    var messageData = JSON.parse(message.toString());
+    console.log(messageData);
+    
+    storage.saveAnswer(messageData)
     .then(() => {
         console.log('Answer saved');	
     }).catch(console.error);

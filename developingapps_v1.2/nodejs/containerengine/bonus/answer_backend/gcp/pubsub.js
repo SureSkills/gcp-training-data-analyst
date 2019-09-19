@@ -17,22 +17,22 @@ const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 
-const topic = pubsub.topic('answers');
+const answerTopic = pubsub.topic('answers');
 
 
 function registerAnswerNotification(cb) {
-  topic.subscribe('answer-subscription', { autoAck: true })
-  .then(results => {
-  const subscription = results[0];
+    const answerSubscription=answerTopic.subscription('answer-subscription', { autoAck: true })
+    answerSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
 
-  subscription.on('message', message => {
-    cb(message.data);
-  });
-
-  subscription.on('error', err => {
-    console.error(err);
-  });
-});
+        subscription.on('error', err => {
+            console.error(err);
+        });
+    });
 
 }
 
@@ -41,3 +41,4 @@ module.exports = {
   registerAnswerNotification
 };
 // [END exports]
+
