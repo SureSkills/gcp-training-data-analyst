@@ -33,20 +33,27 @@
         <div ng-view></div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
-    <script>
-        // Code is for indicative purposes only
-        // logins will fail as the url and apiKey are invalid
-        var config = {
-            apiKey: 'aabbccddeeff00112233445566778899aabbcc',
-            authDomain: 'gdev2-na.firebaseapp.com',
-            databaseURL: 'https://gdev2-na.firebaseio.com',
-            projectId: 'gdev2-na',
-            storageBucket: 'gdev2-na.appspot.com',
-            messagingSenderId: '594068319748'
-        };
-        firebase.initializeApp(config);
-    </script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/6.6.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+<script src="https://www.gstatic.com/firebasejs/6.6.1/firebase-auth.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyDM4DDsuQxdd-BJjUz91TlW6TMaxq1jZVU",
+    authDomain: "qwiklabs-gcp-9f4ca6b522d4e4d1.firebaseapp.com",
+    databaseURL: "https://qwiklabs-gcp-9f4ca6b522d4e4d1.firebaseio.com",
+    projectId: "qwiklabs-gcp-9f4ca6b522d4e4d1",
+    storageBucket: "qwiklabs-gcp-9f4ca6b522d4e4d1.appspot.com",
+    messagingSenderId: "313711267383",
+    appId: "1:313711267383:web:5d5b4f1b76896c36b0b9b2"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
 
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js'></script>
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js'></script>
