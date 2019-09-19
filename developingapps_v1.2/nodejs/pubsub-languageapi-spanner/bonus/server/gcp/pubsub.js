@@ -43,7 +43,7 @@ function registerFeedbackNotification(cb) {
 }
 
 function registerAnswerNotification(cb) {
-    const answerSubscription=feedbackTopic.subscription('answer-subscription', { autoAck: true })
+    const answerSubscription=answersTopic.subscription('answer-subscription', { autoAck: true })
     answerSubscription.get().then(results => {
         const subscription    = results[0];
         
