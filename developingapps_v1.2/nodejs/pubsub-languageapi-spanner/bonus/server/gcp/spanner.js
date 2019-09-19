@@ -33,11 +33,11 @@ async function saveAnswer(
         correct,
         answer
     };
-    console.log('Answer saved');
 
     try {
+        console.log('Saving answer');
         await answersTable.insert(record);
-        console.log('Inserted Answer Record');
+    
     } catch (err) {
         if (err.code === 6 ) {
             // console.log("Duplicate answer message");
@@ -80,8 +80,8 @@ async function saveFeedback(
     };
 
     try {
+        console.log('Saving feedback');
         await table.insert(record);
-        console.log('Inserted Feedback Record');
     } catch (err) {
         if (err.code === 6 ) {
             // console.log("Duplicate feedback message");

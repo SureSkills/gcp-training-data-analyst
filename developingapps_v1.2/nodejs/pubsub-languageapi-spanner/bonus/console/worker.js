@@ -30,7 +30,7 @@ function feedbackHandler(message) {
     .then(storage.saveFeedback)
     .then(() => {
         console.log('Feedback saved');	
-    });
+    }).catch(console.error);
 
 }
 
@@ -43,7 +43,7 @@ function answerHandler(message) {
     storage.saveAnswer(messageData)
     .then(() => {
         console.log('Answer saved');	
-    });
+    }).catch(console.error);
 
 }
 subscriber.registerFeedbackNotification(feedbackHandler);
