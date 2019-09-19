@@ -14,7 +14,7 @@ const config = require('../config');
 const {Spanner} = require('@google-cloud/spanner');
 
 const spanner = new Spanner({
-    projectID: config.get('GCLOUD_PROJECT')
+    projectId: config.get('GCLOUD_PROJECT')
 });
 
 const instance = spanner.instance('quiz-instance');

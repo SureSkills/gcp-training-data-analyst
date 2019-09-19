@@ -11,40 +11,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const config = require('../config');
-const Pubsub = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 
-const pubsub = Pubsub({
+const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 
-const topic = pubsub.topic('feedback');
-const answersTopic = pubsub.topic('answers');
+const feedbackTopic = pubsub.topic('feedback');
+const answerTopic = pubsub.topic('answers');
 
 function publishAnswer(answer) {
-  return answersTopic.publish({
-    data: answer
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answerTopic.publish(dataBuffer);
 }
 
 function publishFeedback(feedback) {
-  return topic.publish({
-    data: feedback
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(feedback))
+  return feedbackTopic.publish(dataBuffer);
 }
 
 function registerFeedbackNotification(cb) {
-  topic.subscribe('worker-subscription', { autoAck: true })
-  .then(results => {
-  const subscription = results[0];
+    const feedbackSubscription=feedbackTopic.subscription('worker-subscription', { autoAck: true })
+    feedbackSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
 
-  subscription.on('message', message => {
-    cb(message.data);
-  });
-
-  subscription.on('error', err => {
-    console.error(err);
-  });
-});
+        subscription.on('error', err => {
+            console.error(err);
+        });
+    });
 
 }
 
