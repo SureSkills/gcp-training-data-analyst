@@ -16,17 +16,18 @@ const spanner = new Spanner();
 
 const instance = spanner.instance('quiz-instance');
 const database = instance.database('quiz-database');
-const table = database.table('feedback');
+const feedbackTable = database.table('feedback');
 
-function saveFeedback(
+
+async function saveFeedback(
     { email, quiz, timestamp, rating, feedback, score }) {
-    const rev_encode_email = email
+    const rev_email = email
         .replace(/[@\.]/g, '_')
         .split('_')
-        .reverse();
-        
+        .reverse()
+        .join('_');
     const record = {
-        feedbackId: `${rev_encode_email}_${quiz}_${timestamp}`,
+        feedbackId: `${rev_email}_${quiz}_${timestamp}`,
         email,
         quiz,
         timestamp,
@@ -34,9 +35,18 @@ function saveFeedback(
         score: spanner.float(score),
         feedback,
     };
-    console.log('Feedback saved');
-    return table.insert(record);
+    try {
+        console.log('Saving feedback');
+        await feedbackTable.insert(record);
+    } catch (err) {
+        if (err.code === 6 ) {
+            // console.log("Duplicate feedback message");
+        } else {
+            console.error('ERROR processing feedback:', err);
+        }
+    }
 }
+
 
 module.exports = {
     saveFeedback

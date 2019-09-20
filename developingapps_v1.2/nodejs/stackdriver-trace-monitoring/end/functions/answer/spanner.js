@@ -16,23 +16,34 @@ const spanner = new Spanner();
 
 const instance = spanner.instance('quiz-instance');
 const database = instance.database('quiz-database');
-const feedbackTable = database.table('feedback');
-const answersTable = database.table('answers');
+const answerTable = database.table('answers');
 
-function saveAnswer(
-    {id, email, quiz, timestamp, correct, answer}) {
+
+async function saveAnswer(
+    { id, email, quiz, timestamp, correct, answer }) {
     const record = {
-          answerId:  `${quiz}_${email}_${id}_${timestamp}`,
-          id,
-          email,
-          quiz,
-          timestamp,
-          correct,
-          answer   
+        answerId: `${quiz}_${email}_${id}_${timestamp}`,
+        id,
+        email,
+        quiz,
+        timestamp,
+        correct,
+        answer
     };
-    console.log('Answer saved');
-    return answersTable.insert(record);
-  }
+
+    try {
+        console.log('Saving answer');
+        await answerTable.insert(record);
+    
+    } catch (err) {
+        if (err.code === 6 ) {
+            // console.log("Duplicate answer message");
+        } else {
+            console.error('ERROR processing answer:', err);
+        }
+    }
+
+}
   
 
 module.exports = {

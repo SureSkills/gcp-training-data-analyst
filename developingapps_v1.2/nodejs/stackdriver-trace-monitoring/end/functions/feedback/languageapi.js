@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const Language = require('@google-cloud/language');
-const language = new Language.LanguageServiceClient();
+const language =  new Language.LanguageServiceClient();
 function analyze(text) {
     const document = {
         content: text,
