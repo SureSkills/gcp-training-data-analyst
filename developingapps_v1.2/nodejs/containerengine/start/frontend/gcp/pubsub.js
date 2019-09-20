@@ -20,10 +20,11 @@ const GCLOUD_PROJECT = config.get('GCLOUD_PROJECT');
 
 const pubsub = new PubSub({GCLOUD_PROJECT});
 const feedbackTopic = pubsub.topic('feedback');
+const answerTopic = pubsub.topic('answers');
 
 function publishFeedback(feedback) {
   const dataBuffer=Buffer.from(JSON.stringify(feedback))
-  return feedbackTopic.publish(dataBuffer);;
+  return feedbackTopic.publish(dataBuffer);
 }
 
 function registerFeedbackNotification(cb) {
@@ -39,11 +40,18 @@ function registerFeedbackNotification(cb) {
             console.error(err);
         });
     });
+    
+}
+
+function publishAnswer(answer) {
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answerTopic.publish(dataBuffer);
 }
 
 // [START exports]
 module.exports = {
   publishFeedback,
+  publishAnswer,
   registerFeedbackNotification,
 };
 // [END exports]
