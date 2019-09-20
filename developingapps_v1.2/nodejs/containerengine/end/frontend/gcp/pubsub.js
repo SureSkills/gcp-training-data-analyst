@@ -19,26 +19,39 @@ const {PubSub} = require('@google-cloud/pubsub');
 const GCLOUD_PROJECT = config.get('GCLOUD_PROJECT');
 
 const pubsub = new PubSub({GCLOUD_PROJECT});
-const topic = pubsub.topic('feedback');
-const subscription = pubsub.subscription('worker-subscription');
+const feedbackTopic = pubsub.topic('feedback');
+const answerTopic = pubsub.topic('answers');
 
 function publishFeedback(feedback) {
-  return topic.publish({
-    data: feedback,
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(feedback))
+  return feedbackTopic.publish(dataBuffer);
 }
 
 function registerFeedbackNotification(cb) {
-  subscription.on('message', cb);
+    const feedbackSubscription = feedbackTopic.subscription('worker-subscription', { autoAck: true });
+    feedbackSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
 
-  subscription.on('error', err => {
-    console.error(err);
-  });
+        subscription.on('error', err => {
+            console.error(err);
+        });
+    });
+    
+}
+
+function publishAnswer(answer) {
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answerTopic.publish(dataBuffer);
 }
 
 // [START exports]
 module.exports = {
   publishFeedback,
+  publishAnswer,
   registerFeedbackNotification,
 };
 // [END exports]

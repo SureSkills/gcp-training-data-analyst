@@ -39,8 +39,8 @@ gcloud spanner instances create quiz-instance --config=regional-us-central1 --de
 gcloud spanner databases create quiz-database --instance quiz-instance --ddl "CREATE TABLE Feedback ( feedbackId STRING(100) NOT NULL, email STRING(100), quiz STRING(20), feedback STRING(MAX), rating INT64, score FLOAT64, timestamp INT64 ) PRIMARY KEY (feedbackId); CREATE TABLE Answers (answerId STRING(100) NOT NULL, id INT64, email STRING(60), quiz STRING(20), answer INT64, correct INT64, timestamp INT64) PRIMARY KEY (answerId DESC);"
 
 echo "Creating Container Engine cluster"
-gcloud container clusters create quiz-cluster --zone us-central1-a --scopes cloud-platform
-gcloud container clusters get-credentials quiz-cluster --zone us-central1-a
+gcloud container clusters create quiz-cluster --zone us-central1-b --scopes cloud-platform
+gcloud container clusters get-credentials quiz-cluster --zone us-central1-b
 
 echo "Building Containers"
 gcloud builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-frontend ./frontend/
