@@ -14,53 +14,13 @@ const config = require('../config');
 const {Spanner} = require('@google-cloud/spanner');
 
 const spanner = new Spanner({
-    projectID: config.get('GCLOUD_PROJECT')
+    projectId: config.get('GCLOUD_PROJECT')
 });
 
 const instance = spanner.instance('quiz-instance');
 const database = instance.database('quiz-database');
 const feedbackTable = database.table('feedback');
-const answerTable = database.table('answers');
 
-async function saveAnswer(
-    { id, email, quiz, timestamp, correct, answer }) {
-    const record = {
-        answerId: `${quiz}_${email}_${id}_${timestamp}`,
-        id,
-        email,
-        quiz,
-        timestamp,
-        correct,
-        answer
-    };
-
-    try {
-        console.log('Saving answer');
-        await answerTable.insert(record);
-    
-    } catch (err) {
-        if (err.code === 6 ) {
-            // console.log("Duplicate answer message");
-        } else {
-            console.error('ERROR processing answer:', err);
-        }
-    }
-
-}
-
-function getLeaderboard() {
-    const sql =
-        `SELECT 
-    quiz, email, COUNT(*) AS score
-FROM Answers
-WHERE correct = answer
-GROUP BY quiz, email
-ORDER BY quiz, score DESC`;
-    return database.run({ sql }).then(([scoreData]) => {
-        const scores = scoreData.map(itemData => itemData.toJSON());
-        return scores;
-    });
-}
 
 async function saveFeedback(
     { email, quiz, timestamp, rating, feedback, score }) {
@@ -93,8 +53,7 @@ async function saveFeedback(
 }
 
 
+
 module.exports = {
-    getLeaderboard,
-    saveAnswer,
     saveFeedback
 };
