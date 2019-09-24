@@ -10,7 +10,7 @@ const feedbackStorage = require('./spanner');
 exports.subscribe = function subscribe(event) {
   // The Cloud Pub/Sub Message object.
   const pubsubMessage = Buffer.from(event.data, 'base64').toString();
-    console.log(`Hello, ${pubsubMessage}!`);
+    console.log(`${pubsubMessage}!`);
 
   let feedbackObject = JSON.parse(pubsubMessage);
   console.log('Feedback object data before Language API:' + JSON.stringify(feedbackObject));
