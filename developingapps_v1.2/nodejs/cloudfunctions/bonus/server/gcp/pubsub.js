@@ -31,18 +31,18 @@ function publishFeedback(feedback) {
 }
 
 function registerFeedbackNotification(cb) {
-    const feedbackSubscription=feedbackTopic.subscription('worker-subscription', { autoAck: true })
-    feedbackSubscription.get().then(results => {
-        const subscription    = results[0];
-        
-        subscription.on('message', message => {
-            cb(message.data);
-        });
+  feedbackTopic.subscribe('worker-subscription', { autoAck: true })
+  .then(results => {
+  const subscription = results[0];
 
-        subscription.on('error', err => {
-            console.error(err);
-        });
-    });
+  subscription.on('message', message => {
+    cb(message.data);
+  });
+
+  subscription.on('error', err => {
+    console.error(err);
+  });
+});
 
 }
 

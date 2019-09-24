@@ -21,7 +21,8 @@ const instance = spanner.instance('quiz-instance');
 const database = instance.database('quiz-database');
 const feedbackTable = database.table('feedback');
 
-async function saveFeedback(
+
+function saveFeedback(
     { email, quiz, timestamp, rating, feedback, score }) {
     const rev_email = email
         .replace(/[@\.]/g, '_')
