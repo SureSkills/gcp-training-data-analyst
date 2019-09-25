@@ -34,7 +34,7 @@ async function saveFeedback(
         quiz,
         timestamp,
         rating,
-        score: spanner.float(score),
+        score: Spanner.float(score),
         feedback,
     };
     try {
