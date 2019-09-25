@@ -30,26 +30,26 @@ function publishFeedback(feedback) {
   return feedbackTopic.publish(dataBuffer);
 }
 
-function registerFeedbackNotification(cb) {
-    const feedbackSubscription=feedbackTopic.subscription('worker-subscription', { autoAck: true })
-    feedbackSubscription.get().then(results => {
-        const subscription    = results[0];
-        
-        subscription.on('message', message => {
-            cb(message.data);
-        });
+//function registerFeedbackNotification(cb) {
+  //feedbackTopic.subscribe('worker-subscription', { autoAck: true })
+  //.then(results => {
+  //const subscription = results[0];
 
-        subscription.on('error', err => {
-            console.error(err);
-        });
-    });
+  //subscription.on('message', message => {
+    //cb(message.data);
+ // });
 
-}
+  //subscription.on('error', err => {
+    //console.error(err);
+  //});
+//});
+
+//}
 
 // [START exports]
 module.exports = {
   publishAnswer,
   publishFeedback,
-  registerFeedbackNotification
+  //registerFeedbackNotification
 };
 // [END exports]

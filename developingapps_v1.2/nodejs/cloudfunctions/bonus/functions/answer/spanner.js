@@ -18,19 +18,17 @@ const instance = spanner.instance('quiz-instance');
 const database = instance.database('quiz-database');
 const answerTable = database.table('answers');
 
-
 async function saveAnswer(
-    { id, email, quiz, timestamp, correct, answer }) {
+    {id, email, quiz, timestamp, correct, answer}) {
     const record = {
-        answerId: `${quiz}_${email}_${id}_${timestamp}`,
-        id,
-        email,
-        quiz,
-        timestamp,
-        correct,
-        answer
+          answerId:  `${quiz}_${email}_${id}_${timestamp}`,
+          id,
+          email,
+          quiz,
+          timestamp,
+          correct,
+          answer   
     };
-
     try {
         console.log('Saving answer');
         await answerTable.insert(record);
@@ -44,7 +42,6 @@ async function saveAnswer(
     }
 
 }
-  
 
 module.exports = {
     saveAnswer

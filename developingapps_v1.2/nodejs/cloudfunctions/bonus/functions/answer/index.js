@@ -8,9 +8,10 @@ const answerStorage = require('./spanner');
 
 exports.subscribe = function subscribe(event) {
   // The Cloud Pub/Sub Message object.
+
   const pubsubMessage = event.data;
 
-  let answerObject = JSON.parse(Buffer.from(pubsubMessage, 'base64').toString()).data;
+  let answerObject = JSON.parse(Buffer.from(pubsubMessage, 'base64').toString());
   console.log('Answer object data:' + JSON.stringify(answerObject));
 
   return answerStorage.saveAnswer(answerObject).then(() => {
@@ -20,5 +21,3 @@ exports.subscribe = function subscribe(event) {
   }).catch(console.error);
 
 };
-
-
