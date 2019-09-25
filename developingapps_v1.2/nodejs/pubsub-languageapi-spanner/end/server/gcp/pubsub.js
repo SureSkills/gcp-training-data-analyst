@@ -27,8 +27,11 @@ function publishFeedback(feedback) {
 
 
 function registerFeedbackNotification(cb) {
-  feedbackTopic.createSubscription('feedback-subscription', { autoAck: true })
-    .then(results => {
+  const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });
+  if (!feedbackSubscription) {
+        feedbackTopic.createSubscription('feedback-subscription', { autoAck: true });
+  } 
+  feedbackSubscription.get().then(results => {
       const subscription = results[0];
 
       subscription.on('message', message => {
@@ -40,37 +43,13 @@ function registerFeedbackNotification(cb) {
       });
     });
 
-}
-
-function registerAnswerNotification(cb) {
-  answersTopic.createSubscription('answer-subscription', { autoAck: true })
-    .then(results => {
-      const subscription = results[0];
-
-      subscription.on('message', message => {
-        cb(message.data);
-      });
-
-      subscription.on('error', err => {
-        console.error(err);
-      });
-    });
-
-}
-
-
-function publishAnswer(answer) {
-  const dataBuffer=Buffer.from(JSON.stringify(answer))
-  return answersTopic.publish(dataBuffer);
 }
 
 
 // [START exports]
 module.exports = {
-  publishAnswer,
   publishFeedback,
-  registerFeedbackNotification,
-  registerAnswerNotification
+  registerFeedbackNotification
 };
 // [END exports]
 

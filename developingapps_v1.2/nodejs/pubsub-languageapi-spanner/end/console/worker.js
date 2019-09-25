@@ -18,13 +18,14 @@ console.log('Worker starting...');
 
 function handler(message) {
     console.log('Message received');
-    console.log(message);
+    var messageData = JSON.parse(message.toString());
+    console.log(messageData);
 
-    languageAPI.analyze(message.data.feedback)
+    languageAPI.analyze(messageData.feedback)
     .then(score => {
       console.log(`Score: ${score}`);
-      message.data.score = score;
-      return message.data;
+      messageData.score = score;
+      return messageData;
     })
     .then(feedbackStorage.saveFeedback)
     .then(() => {

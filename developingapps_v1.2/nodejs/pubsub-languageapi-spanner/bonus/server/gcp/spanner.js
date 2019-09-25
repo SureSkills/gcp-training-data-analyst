@@ -20,7 +20,7 @@ const spanner = new Spanner({
 const instance = spanner.instance('quiz-instance');
 const database = instance.database('quiz-database');
 const feedbackTable = database.table('feedback');
-const answerTable = database.table('answers');
+const answersTable = database.table('answers');
 
 async function saveAnswer(
     { id, email, quiz, timestamp, correct, answer }) {
@@ -36,7 +36,7 @@ async function saveAnswer(
 
     try {
         console.log('Saving answer');
-        await answerTable.insert(record);
+        await answersTable.insert(record);
     
     } catch (err) {
         if (err.code === 6 ) {

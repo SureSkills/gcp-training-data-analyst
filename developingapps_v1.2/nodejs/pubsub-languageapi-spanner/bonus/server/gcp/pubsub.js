@@ -27,34 +27,40 @@ function publishFeedback(feedback) {
 
 
 function registerFeedbackNotification(cb) {
-    const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true })
-    feedbackSubscription.get().then(results => {
-        const subscription    = results[0];
-        
-        subscription.on('message', message => {
-            cb(message.data);
-        });
+  const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });
+  if (!feedbackSubscription) {
+        feedbackTopic.createSubscription('feedback-subscription', { autoAck: true });
+  } 
+  feedbackSubscription.get().then(results => {
+      const subscription    = results[0];
+      
+      subscription.on('message', message => {
+          cb(message.data);
+      });
 
-        subscription.on('error', err => {
-            console.error(err);
-        });
-    });
+      subscription.on('error', err => {
+          console.error(err);
+      });
+  });
 
 }
 
 function registerAnswerNotification(cb) {
-    const answerSubscription=answersTopic.subscription('answer-subscription', { autoAck: true })
-    answerSubscription.get().then(results => {
-        const subscription    = results[0];
-        
-        subscription.on('message', message => {
-            cb(message.data);
-        });
+  const answersSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });
+  if (!answersSubscription) {
+        answersTopic.createSubscription('feedback-subscription', { autoAck: true });
+  } 
+  answersSubscription.get().then(results => {
+      const subscription    = results[0];
+      
+      subscription.on('message', message => {
+          cb(message.data);
+      });
 
-        subscription.on('error', err => {
-            console.error(err);
-        });
-    });
+      subscription.on('error', err => {
+          console.error(err);
+      });
+  });
     
 }
 
