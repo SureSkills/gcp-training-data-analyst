@@ -14,11 +14,8 @@ const config = require('../config');
  const Language = require('@google-cloud/language');
 
 const language = new Language.LanguageServiceClient({
-    projectId: config.get('GCLOUD_PROJECT')});
-//const language = Language({
-  //  projectID: config.get('GCLOUD_PROJECT')
-//});
-
+    projectId: config.get('GCLOUD_PROJECT')
+});
 
 function analyze(text) {
     const document = {
