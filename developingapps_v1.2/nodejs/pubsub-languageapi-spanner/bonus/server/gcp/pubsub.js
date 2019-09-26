@@ -46,9 +46,9 @@ function registerFeedbackNotification(cb) {
 }
 
 function registerAnswerNotification(cb) {
-  const answersSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });
+  const answersSubscription=answersTopic.subscription('answer-subscription', { autoAck: true });
   if (!answersSubscription) {
-        answersTopic.createSubscription('feedback-subscription', { autoAck: true });
+        answersTopic.createSubscription('answer-subscription', { autoAck: true });
   } 
   answersSubscription.get().then(results => {
       const subscription    = results[0];
