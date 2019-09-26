@@ -30,9 +30,9 @@ echo "Creating Cloud Pub/Sub topics"
 gcloud pubsub topics create feedback
 gcloud pubsub topics create answers
 
-#echo "Creating Cloud Pub/Sub Subscriptions"
-#gcloud pubsub subscriptions create feedback-subscription cloud-shell-subscription --topic feedback
-#gcloud pubsub subscriptions create answer-subscription cloud-shell-subscription --topic answers
+echo "Creating Cloud Pub/Sub Subscriptions"
+gcloud pubsub subscriptions create feedback-subscription cloud-shell-subscription --topic feedback
+gcloud pubsub subscriptions create answer-subscription cloud-shell-subscription --topic answers
 
 echo "Creating Cloud Spanner Instance, Database, and Tables"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1
