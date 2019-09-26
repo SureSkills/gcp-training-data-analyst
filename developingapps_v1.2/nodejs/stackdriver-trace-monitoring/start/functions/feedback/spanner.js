@@ -32,10 +32,10 @@ async function saveFeedback(
         quiz,
         timestamp,
         rating,
-        score: spanner.float(score),
+        score: Spanner.float(score),
         feedback,
     };
-    try {
+     try {
         console.log('Saving feedback');
         await feedbackTable.insert(record);
     } catch (err) {
@@ -46,7 +46,6 @@ async function saveFeedback(
         }
     }
 }
-
 
 module.exports = {
     saveFeedback

@@ -64,7 +64,7 @@ router.post('/:quiz', (req, res, next) => {
       const parallel = funcs => Promise.all(funcs.map(func => func()));
 
       // Sends the answers to Pub/Sub one at a time waiting for a response (this is a bad thing...)
-      sequence(answersWithCorrect.map(answer => () => publisher.publishAnswer(answer))).then(() => {
+      parallel(answersWithCorrect.map(answer => () => publisher.publishAnswer(answer))).then(() => {
         // Waits until all the Pub/Sub messages have been acknowledged before returning to the client
         const score = answersWithCorrect.filter(a => a.answer == a.correct).length;           
         res.status(200).json({ correct: score, total: questions.length });

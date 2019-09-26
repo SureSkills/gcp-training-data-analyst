@@ -18,21 +18,24 @@ const pubsub = new PubSub({
 });
 
 const feedbackTopic = pubsub.topic('feedback');
-const answersTopic = pubsub.topic('answers');
+const answerTopic = pubsub.topic('answers');
+
+function publishAnswer(answer) {
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answerTopic.publish(dataBuffer);
+}
 
 function publishFeedback(feedback) {
   const dataBuffer=Buffer.from(JSON.stringify(feedback))
   return feedbackTopic.publish(dataBuffer);
 }
 
-function publishAnswer(answer) {
-  const dataBuffer=Buffer.from(JSON.stringify(answer))
-  return answersTopic.publish(dataBuffer);
-}
+
 
 // [START exports]
 module.exports = {
+  publishAnswer,
   publishFeedback,
-  publishAnswer
+
 };
 // [END exports]
