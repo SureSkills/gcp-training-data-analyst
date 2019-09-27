@@ -1,4 +1,4 @@
-// Copyright 2017, Google, Inc.
+// Copyright 2017, Google, Inc
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,9 +30,9 @@ function registerFeedbackNotification(cb) {
   const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });
   if (!feedbackSubscription) {
         feedbackTopic.createSubscription('feedback-subscription', { autoAck: true });
-  } 
+
   feedbackSubscription.get().then(results => {
-      const subscription    = results[0];
+      const subscription = results[0];
       
       subscription.on('message', message => {
           cb(message.data);
@@ -43,31 +43,32 @@ function registerFeedbackNotification(cb) {
       });
   });
 
+}
+}
+
+function publishAnswer(answer) {
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answersTopic.publish(dataBuffer);
 }
 
 function registerAnswerNotification(cb) {
   const answersSubscription=answersTopic.subscription('answer-subscription', { autoAck: true });
   if (!answersSubscription) {
         answersTopic.createSubscription('answer-subscription', { autoAck: true });
-  } 
+  }
   answersSubscription.get().then(results => {
-      const subscription    = results[0];
+      const subscription = results[0];
       
       subscription.on('message', message => {
-          cb(message.data);
+        cb(message.data);
       });
 
       subscription.on('error', err => {
           console.error(err);
       });
   });
-    
-}
 
-
-function publishAnswer(answer) {
-  const dataBuffer=Buffer.from(JSON.stringify(answer))
-  return answersTopic.publish(dataBuffer);
+  
 }
 
 
