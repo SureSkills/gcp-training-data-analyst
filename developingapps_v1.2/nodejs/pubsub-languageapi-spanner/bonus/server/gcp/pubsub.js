@@ -27,12 +27,17 @@ function publishFeedback(feedback) {
 
 
 function registerFeedbackNotification(cb) {
-  const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });
-  if (!feedbackSubscription) {
-        feedbackTopic.createSubscription('feedback-subscription', { autoAck: true });
 
+  feedbackTopic.createSubscription('feedback-subscription', { autoAck: true }, (err, subscription) => {
+      // subscription already exists
+      if (err && err.code == 6) {
+          console.log("Feedback subscription already exists")
+      }
+  });
+
+  const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });    
   feedbackSubscription.get().then(results => {
-      const subscription = results[0];
+      const subscription    = results[0];
       
       subscription.on('message', message => {
           cb(message.data);
@@ -41,9 +46,8 @@ function registerFeedbackNotification(cb) {
       subscription.on('error', err => {
           console.error(err);
       });
-  });
+  }).catch(error => { console.log("Error getting feedback subscription", error)});;
 
-}
 }
 
 function publishAnswer(answer) {
@@ -52,24 +56,29 @@ function publishAnswer(answer) {
 }
 
 function registerAnswerNotification(cb) {
-  const answersSubscription=answersTopic.subscription('answer-subscription', { autoAck: true });
-  if (!answersSubscription) {
-        answersTopic.createSubscription('answer-subscription', { autoAck: true });
-  }
-  answersSubscription.get().then(results => {
-      const subscription = results[0];
-      
-      subscription.on('message', message => {
-        cb(message.data);
-      });
-
-      subscription.on('error', err => {
-          console.error(err);
-      });
+    
+  answersTopic.createSubscription('answer-subscription', { autoAck: true }, (err, subscription) => {
+    // subscription already exists
+    if (err && err.code == 6) {
+        console.log("Answer subscription already exists")
+    }
   });
-
   
+  const answersSubscription = answersTopic.subscription('answer-subscription', { autoAck: true });
+  answersSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
+
+        subscription.on('error', err => {
+            console.error(err);
+        });
+    }).catch(error => { console.log("Error getting answer subscription", error)});
+    
 }
+
 
 
 // [START exports]
