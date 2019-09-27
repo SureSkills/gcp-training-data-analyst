@@ -38,6 +38,9 @@ console.log('Worker starting...');
 // The callback function - invoked when a message arrives
 function handler(message) {
     console.log('Message received');
+
+  // TODO:  Use try {} to ensure a valid feedback JSON
+
     // TODO: Log the message to the console
 
 
@@ -69,12 +72,22 @@ function handler(message) {
 
     // TODO: Add third .then(...)
 
-    // TODO Log feedback saved message
+        // TODO Log feedback saved message
+
+        // END TODO
 
 
     // END TODO
 
+    // TODO close off the promise chain with a catch() and log
+    // any errors to the console
 
+    // END TODO
+
+// TODO Close the try block and catch errors 
+// Log an error indicating the message was not valid JSON 
+
+// END TODO
 
 }
 

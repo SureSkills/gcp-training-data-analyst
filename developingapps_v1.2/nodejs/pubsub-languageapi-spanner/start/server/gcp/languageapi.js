@@ -20,7 +20,8 @@ const config = require('../config');
 // END TODO
 
 // TODO: Create a client object against the Language API
-// The Language(...) factory function accepts an options 
+// using the Language.LanguageServiceClient function
+// The LanguageServiceClient function accepts an options 
 // object which is used to specify which project should be 
 // billed for use of the API via the projectId property. 
 // The projectId is retrieved from the config module. 

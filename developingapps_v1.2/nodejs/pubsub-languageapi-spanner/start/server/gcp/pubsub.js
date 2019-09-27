@@ -47,9 +47,10 @@ function publishFeedback(feedback) {
   // TODO: Publish a message to the feedback topic
   // This runs asynchronously so you need to return the 
   // Promise that results from executing topic.publish(...)
+  // The feedback object must be converted to a buffer
   // In addition, it's a good idea to use a consistent 
   // property for the message body. This lab will use the 
-  // name data for the message data
+  // name dataBuffer for the message data
 
 
 
@@ -64,11 +65,18 @@ function publishFeedback(feedback) {
 // feedback is received
 function registerFeedbackNotification(cb) {
   // TODO: Create a subscription called worker-subscription
-  // TODO: Have it auto-acknowledge messages
+  // TODO: Have it auto-acknowledge messages and trap errors
+  // TODO: err.code == 6 means subscription already exists
 
 
+  // TODO: Create a subscription object for worker-subscription 
+  // Then use the get() method to call the API request to 
+  // return a promise
 
-  // The results argument in the callback is an array - the 
+
+  // END TODO
+
+  // The results argument in the promise is an array - the 
   // first element in this array is the subscription object.
 
   // TODO: Declare a subscription constant
@@ -77,7 +85,7 @@ function registerFeedbackNotification(cb) {
 
   // END TODO
 
-  // TODO: Register an event handler for message event
+  // TODO: Register an event handler for message events
   // TODO: Use an arrow function to handle the event
 
 
@@ -90,13 +98,15 @@ function registerFeedbackNotification(cb) {
 
 
   // TODO: Register an event handler for error event
-
-
   // TODO: Print the error to the console
 
 
+  // END TODO
+
+  // Add a final catch to the promise chain to handle errors
 
 
+  // END TODO
 
 }
 

@@ -40,7 +40,7 @@ async function saveAnswer(
     
     } catch (err) {
         if (err.code === 6 ) {
-            // console.log("Duplicate answer message");
+            console.log("Duplicate message - answer already saved");
         } else {
             console.error('ERROR processing answer:', err);
         }
@@ -84,7 +84,7 @@ async function saveFeedback(
         await feedbackTable.insert(record);
     } catch (err) {
         if (err.code === 6 ) {
-            // console.log("Duplicate feedback message");
+            console.log("Duplicate message - feedback already saved");
         } else {
             console.error('ERROR processing feedback:', err);
         }

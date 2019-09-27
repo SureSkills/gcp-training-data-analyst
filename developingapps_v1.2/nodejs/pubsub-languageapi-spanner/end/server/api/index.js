@@ -17,7 +17,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const model = require('../gcp/datastore');
+// TODO: Load the ../gcp/pubsub module
 const publisher = require('../gcp/pubsub');
+
+// END TODO
 
 const router = express.Router();
 
@@ -39,6 +42,34 @@ router.get('/:quiz', (req, res, next) => {
 
 
 /**
+ * POST /api/quizzes/feedback/:quiz
+ *
+ * Submit the quiz feedback, get a response
+ */
+router.post('/feedback/:quiz', (req, res, next) => {
+  const feedback = req.body; // in the form [{id, answer}]
+  console.log(feedback);
+
+  // TODO: Publish the message into Cloud Pub/Sub
+  publisher.publishFeedback(feedback).then(() => {
+    // TODO: Move the statement that returns a message to 
+    // the client app here
+    res.json('Feedback received'); // move this
+    
+  // END TODO
+    // TODO: Add a catch
+  }).catch(err => {
+      // TODO: There was an error, invoke the next middleware
+    next(err);
+    
+  // END TODO
+  });
+  
+  // END TODO
+
+});
+
+/**
  * POST /api/quizzes/:quiz
  *
  * Submit the quiz answers, return a score.
@@ -55,22 +86,6 @@ router.post('/:quiz', (req, res, next) => {
 
       res.status(200).json({correct:score, total: questions.length});
     }, err => { next(err) });
-});
-
-/**
- * POST /api/quizzes/feedback/:quiz
- *
- * Submit the quiz feedback, get a response
- */
-router.post('/feedback/:quiz', (req, res, next) => {
-  const feedback = req.body; // in the form [{id, answer}]
-  console.log(feedback);
-  publisher.publishFeedback(feedback).then(() => {
-    res.json('Feedback received');
-  }).catch(err => {
-    next(err);
-  });
-
 });
 
 

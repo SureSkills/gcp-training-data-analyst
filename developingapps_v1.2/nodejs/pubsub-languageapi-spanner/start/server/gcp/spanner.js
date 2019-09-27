@@ -64,6 +64,7 @@ function saveFeedback({ email, quiz, timestamp, rating, feedback, score }) {
     // END TODO
 
     // TODO: Create record object to be inserted into Spanner
+    // USe Spanner.float() to convert the score property
 
 
 
@@ -72,6 +73,8 @@ function saveFeedback({ email, quiz, timestamp, rating, feedback, score }) {
     // END TODO
 
     // TODO: Insert the record into the table
+    // use try {} catch {} and check for err.code==6 to trap
+    // insert errors caused by duplicated PubSub messages
 
 
 
