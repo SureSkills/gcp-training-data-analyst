@@ -18,33 +18,39 @@ console.log('Worker starting...');
 
 function feedbackHandler(message) {
     console.log('Feedback received');
-    var messageData = JSON.parse(message.toString());
-    console.log(messageData);
-
-    languageAPI.analyze(messageData.feedback)
-    .then(score => {
-      console.log(`Score: ${score}`);
-      messageData.score = score;
-      return messageData;
-    })
-    .then(storage.saveFeedback)
-    .then(() => {
-        console.log('Feedback saved');	
-    }).catch(console.error);
+    try {
+        var messageData = JSON.parse(message.toString());
+        console.log(messageData);
+        languageAPI.analyze(messageData.feedback)
+        .then(score => {
+            console.log(`Score: ${score}`);
+            messageData.score = score;
+            return messageData;
+        })
+        .then(storage.saveFeedback)
+        .then(() => {
+            console.log('Feedback saved');	
+        }).catch(console.error);
+    } catch { 
+        console.log("Invalid feedback message- no JSON data:", message.toString()) 
+    }
 
 }
 
 
 function answerHandler(message) {
     console.log('Answer received');
-    var messageData = JSON.parse(message.toString());
-    console.log(messageData);
+    try {
+        var messageData = JSON.parse(message.toString());
+        console.log(messageData);
 
-    storage.saveAnswer(messageData)
-    .then(() => {
-        console.log('Answer saved');	
-    }).catch(console.error);
-
+        storage.saveAnswer(messageData)
+        .then(() => {
+            console.log('Answer saved');	
+        }).catch(console.error);
+    } catch { 
+        console.log("Invalid answer message- no JSON data:", message.toString()) 
+    }
 }
 subscriber.registerFeedbackNotification(feedbackHandler);
 console.log('Feedback registration complete...');
