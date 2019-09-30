@@ -11,36 +11,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 const config = require('../config');
-const Pubsub = require('@google-cloud/pubsub');
+const {PubSub} = require('@google-cloud/pubsub');
 
-const pubsub = Pubsub({
+const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 
-const topic = pubsub.topic('feedback');
+const feedbackTopic = pubsub.topic('feedback');
 
 function publishFeedback(feedback) {
-  return topic.publish({
-    data: feedback
-  });
+  const dataBuffer=Buffer.from(JSON.stringify(feedback))
+  return feedbackTopic.publish(dataBuffer);
 }
 
 function registerFeedbackNotification(cb) {
-  topic.subscribe('worker-subscription', { autoAck: true })
-  .then(results => {
-  const subscription = results[0];
 
-  subscription.on('message', message => {
-    cb(message.data);
+  feedbackTopic.createSubscription('feedback-subscription', { autoAck: true }, (err, subscription) => {
+      // subscription already exists
+      if (err && err.code == 6) {
+          console.log("Feedback subscription already exists")
+      }
   });
 
-  subscription.on('error', err => {
-    console.error(err);
-  });
-});
+  const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });    
+  feedbackSubscription.get().then(results => {
+      const subscription    = results[0];
+      
+      subscription.on('message', message => {
+          cb(message.data);
+      });
+
+      subscription.on('error', err => {
+          console.error(err);
+      });
+  }).catch(error => { console.log("Error getting feedback subscription", error)});;
 
 }
-
 // [START exports]
 module.exports = {
   publishFeedback,
