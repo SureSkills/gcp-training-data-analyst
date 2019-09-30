@@ -9,21 +9,21 @@ const feedbackStorage = require('./spanner');
 
 exports.subscribe = function subscribe(event) {
   // The Cloud Pub/Sub Message object.
-  const pubsubMessage = event.data;
-
-  let feedbackObject = JSON.parse(Buffer.from(pubsubMessage.data, 'base64').toString()).data;
+  const pubsubMessage = Buffer.from(event.data, 'base64').toString();
+    console.log(`${pubsubMessage}!`);
+  
+  let feedbackObject = JSON.parse(pubsubMessage);
   console.log('Feedback object data before Language API:' + JSON.stringify(feedbackObject));
-  
-  return languageAPI.analyze(feedbackObject.feedback).then(score => {
-  	console.log(`Score: ${score}`);
-  	feedbackObject.score = score;
-  	return feedbackObject;
-  }).then(feedbackStorage.saveFeedback).then(() => {
-  	console.log('feedback saved...');
-  	return 'success';
-  	
-  }).catch(console.error);
-  
-};
 
+  return languageAPI.analyze(feedbackObject.feedback).then(score => {
+    console.log(`Score: ${score}`);
+    feedbackObject.score = score;
+    return feedbackObject;
+  }).then(feedbackStorage.saveFeedback).then(() => {
+    console.log('feedback saved...');
+    return 'success';
+
+  }).catch(console.error);
+
+};
 
