@@ -12,26 +12,29 @@
 // limitations under the License.
 const subscriber = require('./gcp/pubsub');
 const languageAPI = require('./gcp/languageapi');
-const feedbackStorage = require('./gcp/spanner');
+const storage = require('./gcp/spanner');
 
 console.log('Worker starting...');
 
-function handler(message) {
-    console.log('Message received');
-    var messageData = JSON.parse(message.toString());
-    console.log(messageData);
-
-    languageAPI.analyze(messageData.feedback)
-    .then(score => {
-      console.log(`Score: ${score}`);
-      messageData.score = score;
-      return messageData;
-    })
-    .then(feedbackStorage.saveFeedback)
-    .then(() => {
-        console.log('Feedback saved');
-    });
+function feedbackHandler(message) {
+    console.log('Feedback received');
+    try {
+        var messageData = JSON.parse(message.toString());
+        console.log(messageData);
+        languageAPI.analyze(messageData.feedback)
+        .then(score => {
+            console.log(`Score: ${score}`);
+            messageData.score = score;
+            return messageData;
+        })
+        .then(storage.saveFeedback)
+        .then(() => {
+            console.log('Feedback saved');  
+        }).catch(console.error);
+    } catch { 
+        console.log("Invalid feedback message- no JSON data:", message.toString()) 
+    }
 
 }
-
-subscriber.registerFeedbackNotification(handler);
+subscriber.registerFeedbackNotification(feedbackHandler);
+console.log('Feedback registration complete...');
