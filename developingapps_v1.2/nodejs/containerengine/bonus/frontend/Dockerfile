@@ -14,8 +14,9 @@
 FROM gcr.io/google_appengine/nodejs
 RUN /usr/local/bin/install_node '>=0.12.7'
 COPY . /app/
-RUN npm install --unsafe-perm || \
+RUN npm install -g npm@6.11.3 --unsafe-perm || \
   ((if [ -f npm-debug.log ]; then \
       cat npm-debug.log; \
     fi) && false)
+RUN npm update    
 CMD npm start

@@ -15,16 +15,20 @@ const storage = require('./gcp/spanner');
 
 console.log('Answer worker starting...');
 
-function handler(message) {
-    console.log('Message received');
-    var messageData = JSON.parse(message.toString());
-    console.log(messageData);
-    
-    storage.saveAnswer(messageData)
-    .then(() => {
-        console.log('Answer saved');	
-    }).catch(console.error);
+function answerHandler(message) {
+    console.log('Answer received');
+    try {
+        var messageData = JSON.parse(message.toString());
+        console.log(messageData);
 
+        storage.saveAnswer(messageData)
+        .then(() => {
+            console.log('Answer saved');	
+        }).catch(console.error);
+    } catch { 
+        console.log("Invalid answer message- no JSON data:", message.toString()) 
+    }
 }
 
-subscriber.registerAnswerNotification(handler);
+subscriber.registerAnswerNotification(answerHandler);
+console.log('Answer registration complete...');

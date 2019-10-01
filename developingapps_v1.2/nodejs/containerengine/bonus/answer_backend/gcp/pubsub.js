@@ -17,12 +17,25 @@ const pubsub = new PubSub({
   projectId: config.get('GCLOUD_PROJECT')
 });
 
-const answerTopic = pubsub.topic('answers');
+const answersTopic = pubsub.topic('answers');
 
+
+function publishAnswer(answer) {
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answersTopic.publish(dataBuffer);
+}
 
 function registerAnswerNotification(cb) {
-    const answerSubscription=answerTopic.subscription('answer-subscription', { autoAck: true })
-    answerSubscription.get().then(results => {
+    
+  answersTopic.createSubscription('answer-subscription', { autoAck: true }, (err, subscription) => {
+    // subscription already exists
+    if (err && err.code == 6) {
+        console.log("Answer subscription already exists")
+    }
+  });
+  
+  const answersSubscription = answersTopic.subscription('answer-subscription', { autoAck: true });
+  answersSubscription.get().then(results => {
         const subscription    = results[0];
         
         subscription.on('message', message => {
@@ -32,12 +45,13 @@ function registerAnswerNotification(cb) {
         subscription.on('error', err => {
             console.error(err);
         });
-    });
-
+    }).catch(error => { console.log("Error getting answer subscription", error)});
+    
 }
 
 // [START exports]
 module.exports = {
+  publishAnswer,  
   registerAnswerNotification
 };
 // [END exports]

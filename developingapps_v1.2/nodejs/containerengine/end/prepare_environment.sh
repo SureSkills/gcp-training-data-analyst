@@ -30,7 +30,7 @@ node setup/add_entities.js
 
 echo "Creating Cloud Pub/Sub topic"
 gcloud pubsub topics create feedback
-gcloud pubsub subscriptions create worker-subscription --topic=feedback
+gcloud pubsub subscriptions create feedback-subscription --topic=feedback
 
 echo "Creating Cloud Spanner Instance, Database, and Table"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1
@@ -41,8 +41,8 @@ gcloud container clusters create quiz-cluster --zone us-central1-b --scopes clou
 gcloud container clusters get-credentials quiz-cluster --zone us-central1-b
 
 echo "Building Containers"
-gcloud container builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-frontend ./frontend/
-gcloud container builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-backend ./backend/
+gcloud builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-frontend ./frontend/
+gcloud builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-backend ./backend/
 
 echo "Deploying to Container Engine"
 sed -i -e "s/\[GCLOUD_PROJECT\]/$DEVSHELL_PROJECT_ID/g" ./frontend-deployment.yaml

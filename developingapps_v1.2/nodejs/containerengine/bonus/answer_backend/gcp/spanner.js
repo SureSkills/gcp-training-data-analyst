@@ -19,28 +19,30 @@ const database = instance.database('quiz-database');
 const answersTable = database.table('answers');
 
 async function saveAnswer(
-    {id, email, quiz, timestamp, correct, answer}) {
+    { id, email, quiz, timestamp, correct, answer }) {
     const record = {
-          answerId:  `${quiz}_${email}_${id}_${timestamp}`,
-          id,
-          email,
-          quiz,
-          timestamp,
-          correct,
-          answer   
+        answerId: `${quiz}_${email}_${id}_${timestamp}`,
+        id,
+        email,
+        quiz,
+        timestamp,
+        correct,
+        answer
     };
+
     try {
         console.log('Saving answer');
         await answersTable.insert(record);
-  
+    
     } catch (err) {
         if (err.code === 6 ) {
-            // console.log("Duplicate answer message");
+            console.log("Duplicate message - answer already saved");
         } else {
             console.error('ERROR processing answer:', err);
         }
     }
-  }
+
+}
   
 
 module.exports = {

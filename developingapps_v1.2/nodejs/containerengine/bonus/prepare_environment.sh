@@ -30,7 +30,7 @@ node setup/add_entities.js
 
 echo "Creating Cloud Pub/Sub topics"
 gcloud pubsub topics create feedback
-gcloud pubsub subscriptions create worker-subscription --topic=feedback
+gcloud pubsub subscriptions create feedback-subscription --topic=feedback
 gcloud pubsub topics create answers
 gcloud pubsub subscriptions create answer-subscription --topic=answers
 
