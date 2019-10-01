@@ -38,12 +38,13 @@ async function saveFeedback(
         score: Spanner.float(score),
         feedback,
     };
+
     try {
         console.log('Saving feedback');
         await feedbackTable.insert(record);
     } catch (err) {
         if (err.code === 6 ) {
-            // console.log("Duplicate feedback message");
+            console.log("Duplicate message - feedback already saved");
         } else {
             console.error('ERROR processing feedback:', err);
         }
