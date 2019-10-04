@@ -1,4 +1,4 @@
-// Copyright 2017, Google, Inc.
+// Copyright 2017, Google, Inc
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,12 +18,7 @@ const pubsub = new PubSub({
 });
 
 const feedbackTopic = pubsub.topic('feedback');
-const answerTopic = pubsub.topic('answers');
-
-function publishAnswer(answer) {
-  const dataBuffer=Buffer.from(JSON.stringify(answer))
-  return answerTopic.publish(dataBuffer);
-}
+const answersTopic = pubsub.topic('answers');
 
 function publishFeedback(feedback) {
   const dataBuffer=Buffer.from(JSON.stringify(feedback))
@@ -31,11 +26,63 @@ function publishFeedback(feedback) {
 }
 
 
+function registerFeedbackNotification(cb) {
 
+  feedbackTopic.createSubscription('feedback-subscription', { autoAck: true }, (err, subscription) => {
+      // subscription already exists
+      if (err && err.code == 6) {
+          console.log("Feedback subscription already exists")
+      }
+  });
+
+  const feedbackSubscription=feedbackTopic.subscription('feedback-subscription', { autoAck: true });    
+  feedbackSubscription.get().then(results => {
+      const subscription    = results[0];
+      
+      subscription.on('message', message => {
+          cb(message.data);
+      });
+
+      subscription.on('error', err => {
+          console.error(err);
+      });
+  }).catch(error => { console.log("Error getting feedback subscription", error)});;
+
+}
+
+function publishAnswer(answer) {
+  const dataBuffer=Buffer.from(JSON.stringify(answer))
+  return answersTopic.publish(dataBuffer);
+}
+
+function registerAnswerNotification(cb) {
+    
+  answersTopic.createSubscription('answer-subscription', { autoAck: true }, (err, subscription) => {
+    // subscription already exists
+    if (err && err.code == 6) {
+        console.log("Answer subscription already exists")
+    }
+  });
+  
+  const answersSubscription = answersTopic.subscription('answer-subscription', { autoAck: true });
+  answersSubscription.get().then(results => {
+        const subscription    = results[0];
+        
+        subscription.on('message', message => {
+            cb(message.data);
+        });
+
+        subscription.on('error', err => {
+            console.error(err);
+        });
+    }).catch(error => { console.log("Error getting answer subscription", error)});
+    
+}
 // [START exports]
 module.exports = {
   publishAnswer,
   publishFeedback,
-
+  registerFeedbackNotification,
+  registerAnswerNotification
 };
 // [END exports]
