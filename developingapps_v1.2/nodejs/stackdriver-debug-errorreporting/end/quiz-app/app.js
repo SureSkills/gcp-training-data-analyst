@@ -12,16 +12,35 @@
 // limitations under the License.
 
 'use strict';
+// TODO: Add the following statement to import and start
+// Stackdriver debug-agent
+// The start(...) method takes an 'options' object that you 
+// can use to configure the Stackdriver Debugger agent.
+// You will need to pass through an object with an 
+// allowExpressions Boolean property set to true.
+
 require('@google-cloud/debug-agent').start({ allowExpressions: true });
+
+// END TODO
+
+// TODO: Load the error-reporting module
+
 const {ErrorReporting} = require(
        '@google-cloud/error-reporting');
+
+// END TODO
 
 const path = require('path');
 const express = require('express');
 const config = require('./config');
 
-const errorReporting = new ErrorReporting();
 const app = express();
+
+// TODO: Create the errorReporting client object
+
+const errorReporting = new ErrorReporting();
+
+// END TODO
 
 // Static files
 app.use(express.static('public/'));
@@ -43,8 +62,12 @@ app.get('/', (req, res) => {
   res.render('home.pug');
 });
 
-// Use Stackdriver Error Reporting Express middleware
+// Use Stackdriver Error Reporting
+// middleware for Express
+
 app.use(errorReporting.express);
+
+// END TODO
 
 // Basic 404 handler
 app.use((req, res) => {
