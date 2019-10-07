@@ -12,14 +12,40 @@
 // limitations under the License.
 
 'use strict';
+
+// TODO: Load the ../config module
+
 const config = require('../config');
+
+// END TODO
+
+// TODO: Load the @google-cloud/datastore module
+
 const {Datastore} = require('@google-cloud/datastore');
+
+// END TODO
+
+// TODO: Create a Datastore client object, ds
+// The Datastore(...) factory function accepts an options // object which is used to specify which project's
+// Datastore should be used via the projectId property.
+// The projectId is retrieved from the config module. This // module retrieves the project ID from the GCLOUD_PROJECT // environment variable.
 
 const ds = new Datastore({
  projectId: config.get('GCLOUD_PROJECT')
 });
 
+// END TODO
+
+// TODO: Declare a constant named kind
+//The Datastore key is the equivalent of a primary key in a // relational database.
+// There are two main ways of writing a key:
+// 1. Specify the kind, and let Datastore generate a unique //    numeric id
+// 2. Specify the kind and a unique string id
+
 const kind = 'Question';
+
+// END TODO
+
 
 // Lists all questions in a Quiz (defaults to 'gcp').
 // Returns a promise
@@ -41,11 +67,30 @@ function list(quiz = 'gcp') {
 }
 // [END list]
 
+
+  // BONUS TODO: Create the query
+  // The Datastore client has a ds.createQuery() method that   
+  // allows you to specify the kind(s) of entities to be 
+  // retrieved.
+  // The query can be customized to filter the Question 
+  // entities for one quiz.
 // [START create]
 function create({ quiz, author, title, answer1, answer2, answer3, answer4, correctAnswer }) {
+
+ // TODO: Declare the entity key,
+ // with a Datastore generated id
+
   const key = ds.key(kind);
+
+   // END TODO
+
+   // TODO: Declare the entity object, with the key and data
+
   const entity = {
     key,
+// The entity's members are represented in a data property.
+// This is an array where each element represents one
+// member in the entity. Each element is an object with a // name and a value  
     data: [
       { name: 'quiz', value: quiz },
       { name: 'author', value: author },
@@ -57,8 +102,17 @@ function create({ quiz, author, title, answer1, answer2, answer3, answer4, corre
       { name: 'correctAnswer', value: correctAnswer },
     ]
   };
+  // END TODO
+
+// TODO: Save the entity, return a promise
+// The ds.save(...) method returns a Promise to the
+// caller, as it runs asynchronously.
+
   return ds.save(entity);
+
+  // END TODO
 }
+
 // [END create]
 
 // [START exports]

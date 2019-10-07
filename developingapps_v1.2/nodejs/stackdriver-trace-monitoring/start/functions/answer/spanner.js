@@ -35,7 +35,7 @@ async function saveAnswer(
     
     } catch (err) {
         if (err.code === 6 ) {
-            // console.log("Duplicate answer message");
+            console.log("Duplicate message - answer already saved");
         } else {
             console.error('ERROR processing answer:', err);
         }

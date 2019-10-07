@@ -11,15 +11,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 'use strict';
-const config = require('./config');
+
+// TODO: Load the trace-agent and start it
+// Trace must be started before any other code in the 
+// application.
+
 require('@google-cloud/trace-agent').start({
 	projectId: config.get('GCLOUD_PROJECT')
 });
+
+// END TODO
+
 require('@google-cloud/debug-agent').start({
   allowExpressions: true,
 	projectId: config.get('GCLOUD_PROJECT')
 });
 
+
+const config = require('./config');
 const path = require('path');
 const express = require('express');
 const scores = require('./gcp/spanner');

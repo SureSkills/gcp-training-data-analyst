@@ -14,43 +14,136 @@
 'use strict';
 
 const config = require('../config');
+
+// TODO: Load the module for Cloud Storage
+
 const {Storage} = require('@google-cloud/storage');
+
+// END TODO
+
+// TODO: Create the storage client
+// The Storage(...) factory function accepts an options
+// object which is used to specify which project's Cloud
+// Storage buckets should be used via the projectId
+// property.
+// The projectId is retrieved from the config module.
+// This module retrieves the project ID from the
+// GCLOUD_PROJECT environment variable.
+
 const storage = new Storage({
   projectId: config.get('GCLOUD_PROJECT')
 });
+
+// END TODO
+
+// TODO: Get the GCLOUD_BUCKET environment variable
+// Recall that earlier you exported the bucket name into an
+// environment variable.
+// The config module provides access to this environment
+// variable so you can use it in code
+
 const GCLOUD_BUCKET = config.get('GCLOUD_BUCKET');
+
+// END TODO
+
+// TODO: Get a reference to the Cloud Storage bucket
+
 const bucket = storage.bucket(GCLOUD_BUCKET);
+
+// END TODO
 
 // Express middleware that will automatically pass uploads to Cloud Storage.
 // req.file is processed and will have a new property:
 // * ``cloudStoragePublicUrl`` the public url to the object.
 // [START sendUploadToGCS]
 function sendUploadToGCS(req, res, next) {
+
+// The existing code in the handler checks to see if there
+// is a file property on the HTTP request - if a file has
+// been uploaded, then Multer will have created this
+// property in the preceding middleware call.
+
   if (!req.file) {
     return next();
   }
 
+// In addition, a unique object name, oname,  has been
+// created based on the file's original name. It has a
+// prefix generated using the current date and time.
+// This should ensure that a new file upload won't
+// overwrite an existing object in the bucket
   const oname = Date.now() + req.file.originalname;
+  // TODO: Get a reference to the new object
 
   const file = bucket.file(oname);
+
+    // END TODO
+
+  // TODO: Create a stream to write the file into
+  // Cloud Storage
+// The uploaded file's MIME type can be retrieved using
+// req.file.mimetype.
+// Cloud Storage metadata can be used for many purposes,
+// including establishing the type of an object.
+
   const stream = file.createWriteStream({
     metadata: {
       contentType: req.file.mimetype
     }
   });
 
+    // END TODO
+
+  // TODO: Attach two event handlers (1) error
+  // Event handler if there's an error when uploading
+
   stream.on('error', err => {
+    // TODO: If there's an error move to the next handler 
+
     next(err);
+
+      // END TODO 
   });
 
+  // END TODO
+
+  // TODO: Attach two event handlers (2) finish
+  // The upload completed successfully
   stream.on('finish', () => {
+
+    // TODO: Make the object publicly accessible  
     file.makePublic().then(() => {
-      req.file.cloudStoragePublicUrl = `https://storage.googleapis.com/${GCLOUD_BUCKET}/${oname}`;
+      // TODO: Set a new property on the file for the
+      // public URL for the object  
+
+// Cloud Storage public URLs are in the form:
+// https://storage.googleapis.com/[BUCKET]/[OBJECT]
+// Use an ECMAScript template literal (`https://...`)to
+// populate the URL with appropriate values for the bucket
+// ${GCLOUD_BUCKET} and object name ${oname}
+
+      req.file.cloudStoragePublicUrl =
+`https://storage.googleapis.com/${GCLOUD_BUCKET}/${oname}`;
+
+// END TODO
+
+      // TODO: Invoke the next middleware handler
+
       next();
+
+      // END TODO
     });
   });
+
+  // END TODO
+
+  // TODO: End the stream to upload the file's data
+
   stream.end(req.file.buffer);
+
+  // END TODO
 }
+
 // [END sendUploadToGCS]
 
 // Multer handles parsing multipart/form-data requests.
