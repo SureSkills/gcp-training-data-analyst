@@ -29,16 +29,16 @@ echo "Creating Datastore entities"
 node setup/add_entities.js
 
 echo "NOT Creating Cloud Pub/Sub topic"
-# gcloud beta pubsub topics create feedback
+# gcloud pubsub topics create feedback
 
 echo "Creating Cloud Spanner Instance, but NOT Database, and NOT Table"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1
 # gcloud spanner databases create quiz-database --instance quiz-instance --ddl "CREATE TABLE Feedback ( feedbackId STRING(100) NOT NULL, email STRING(100), quiz STRING(20), feedback STRING(MAX), rating INT64, score FLOAT64, timestamp INT64 ) PRIMARY KEY (feedbackId);"
 
 echo "Enabling Cloud Functions API"
-gcloud beta services enable cloudfunctions.googleapis.com
+gcloud services enable cloudfunctions.googleapis.com
 
 echo "NOT Creating Cloud Function"
-# gcloud beta functions deploy process-feedback --runtime nodejs8 --trigger-topic feedback --source ./function --stage-bucket $GCLOUD_BUCKET --entry-point subscribe
+# gcloud functions deploy process-feedback --runtime nodejs8 --trigger-topic feedback --source ./function --stage-bucket $GCLOUD_BUCKET --entry-point subscribe
 
 echo "Project ID: $DEVSHELL_PROJECT_ID"
