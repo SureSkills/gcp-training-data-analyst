@@ -26,12 +26,15 @@ export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
 
 echo "Creating virtual environment"
 mkdir ~/venvs
-virtualenv ~/venvs/developingapps
+pip2 install virtualenv
+virtualenv --python=/usr/bin/python2.7 ~/venvs/developingapps
+#virtualenv ~/venvs/developingapps
 source ~/venvs/developingapps/bin/activate
 
 echo "Installing Python libraries"
-pip install --upgrade pip
-pip install -r requirements.txt
+pip2 install --upgrade pip
+pip2 install -r requirements.txt
+pip2 freeze > requirements.txt
 
 echo "Creating Datastore entities"
 python add_entities.py
@@ -45,10 +48,10 @@ echo "Setting quiz-account IAM Role"
 gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member serviceAccount:quiz-account@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com --role roles/owner
 
 echo "Creating Cloud Pub/Sub topics"
-gcloud beta pubsub topics create feedback
-gcloud beta pubsub topics create answers
-gcloud beta pubsub subscriptions create worker-subscription --topic feedback
-gcloud beta pubsub subscriptions create answer-subscription --topic answers
+gcloud pubsub topics create feedback
+gcloud pubsub topics create answers
+gcloud pubsub subscriptions create worker-subscription --topic feedback
+gcloud pubsub subscriptions create answer-subscription --topic answers
 
 echo "Creating Cloud Spanner Instance, Database, and Tables"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1
@@ -59,17 +62,17 @@ gcloud container clusters create quiz-cluster --zone us-central1-a --scopes clou
 gcloud container clusters get-credentials quiz-cluster --zone us-central1-a
 
 echo "Building Containers"
-gcloud container builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-frontend ./frontend/
-gcloud container builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-backend ./backend/
-gcloud container builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-answer-backend ./answer_backend/
+gcloud builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-frontend ./frontend/
+gcloud builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-backend ./backend/
+gcloud builds submit -t gcr.io/$DEVSHELL_PROJECT_ID/quiz-answer-backend ./answer_backend/
 
 echo "Deploying to Container Engine"
 sed -i -e "s/\[GCLOUD_PROJECT\]/$DEVSHELL_PROJECT_ID/g" ./frontend-deployment.yaml
 sed -i -e "s/\[GCLOUD_PROJECT\]/$DEVSHELL_PROJECT_ID/g" ./backend-deployment.yaml
 sed -i -e "s/\[GCLOUD_PROJECT\]/$DEVSHELL_PROJECT_ID/g" ./answer-backend-deployment.yaml
-kubectl create -f ./frontend-deployment.yaml
-kubectl create -f ./backend-deployment.yaml
-kubectl create -f ./answer-backend-deployment.yaml
-kubectl create -f ./frontend-service.yaml
+kubectl apply -f ./frontend-deployment.yaml
+kubectl apply -f ./backend-deployment.yaml
+kubectl apply -f ./answer-backend-deployment.yaml
+kubectl apply -f ./frontend-service.yaml
 
 echo "Project ID: $DEVSHELL_PROJECT_ID"
