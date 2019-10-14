@@ -26,12 +26,13 @@ export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
 
 echo "Creating virtual environment"
 mkdir ~/venvs
-virtualenv ~/venvs/developingapps
+pip2 install virtualenv
+virtualenv --python=/usr/bin/python2.7 ~/venvs/developingapps
 source ~/venvs/developingapps/bin/activate
 
 echo "Installing Python libraries"
-pip install --upgrade pip
-pip install -r requirements.txt
+pip2 install --upgrade pip
+pip2 install -r requirements.txt
 
 echo "Creating Datastore entities"
 python add_entities.py
@@ -45,10 +46,10 @@ echo "Setting quiz-account IAM Role"
 gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member serviceAccount:quiz-account@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com --role roles/owner
 
 echo "Creating Cloud Pub/Sub topics"
-gcloud beta pubsub topics create feedback
-gcloud beta pubsub topics create answers
-gcloud beta pubsub subscriptions create worker-subscription --topic feedback
-gcloud beta pubsub subscriptions create answer-subscription --topic answers
+gcloud pubsub topics create feedback
+gcloud pubsub topics create answers
+gcloud pubsub subscriptions create worker-subscription --topic feedback
+gcloud pubsub subscriptions create answer-subscription --topic answers
 
 echo "Creating Cloud Spanner Instance, Database, and Table"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1

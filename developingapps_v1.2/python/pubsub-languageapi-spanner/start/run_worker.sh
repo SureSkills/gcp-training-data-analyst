@@ -23,4 +23,4 @@ export GOOGLE_APPLICATION_CREDENTIALS=key.json
 #source ~/venvs/developingapps/bin/activate
 
 echo "Starting worker"
-python -m quiz.console.worker
+python2 -m quiz.console.worker
