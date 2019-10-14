@@ -26,14 +26,12 @@ export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
 
 #echo "Creating virtual environment"
 #mkdir ~/venvs
-#pip2 install virtualenv
-#virtualenv --python=/usr/bin/python2.7 ~/venvs/developingapps
+#virtualenv ~/venvs/developingapps
 #source ~/venvs/developingapps/bin/activate
 
 echo "Installing Python libraries"
-pip2 install --upgrade pip
-pip2 install -r requirements.txt
-pip2 freeze > requirements.txt
+sudo pip install --upgrade pip
+sudo pip install -r requirements.txt
 
 echo "Creating Datastore entities"
 python add_entities.py
@@ -47,16 +45,16 @@ echo "Setting quiz-account IAM Role"
 gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member serviceAccount:quiz-account@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com --role roles/owner
 
 echo "Creating Cloud Pub/Sub topic"
-gcloud pubsub topics create feedback
+gcloud beta pubsub topics create feedback
 
 echo "Creating Cloud Spanner Instance, Database, and Table"
 gcloud spanner instances create quiz-instance --config=regional-us-central1 --description="Quiz instance" --nodes=1
 gcloud spanner databases create quiz-database --instance quiz-instance --ddl "CREATE TABLE Feedback ( feedbackId STRING(100) NOT NULL, email STRING(100), quiz STRING(20), feedback STRING(MAX), rating INT64, score FLOAT64, timestamp INT64 ) PRIMARY KEY (feedbackId);"
 
 echo "Enabling Cloud Functions API"
-gcloud services enable cloudfunctions.googleapis.com
+gcloud beta services enable cloudfunctions.googleapis.com
 
 echo "Creating Cloud Function"
-gcloud functions deploy process-feedback --runtime nodejs8 --trigger-topic feedback --source ./function --stage-bucket $GCLOUD_BUCKET --entry-point subscribe
+gcloud beta functions deploy process-feedback --runtime nodejs8 --trigger-topic feedback --source ./function --stage-bucket $GCLOUD_BUCKET --entry-point subscribe
 
 echo "Project ID: $DEVSHELL_PROJECT_ID"
