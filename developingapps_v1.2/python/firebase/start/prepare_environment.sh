@@ -26,12 +26,13 @@ export GCLOUD_BUCKET=$DEVSHELL_PROJECT_ID-media
 
 #echo "Creating virtual environment"
 #mkdir ~/venvs
-#virtualenv ~/venvs/developingapps
+#pip2 install virtualenv
+#virtualenv --python=/usr/bin/python2.7 ~/venvs/developingapps
 #source ~/venvs/developingapps/bin/activate
 
 echo "Installing Python libraries"
-sudo pip install --upgrade pip
-sudo pip install -r requirements.txt
+sudo pip2 install --upgrade pip
+sudo pip2 install -r requirements.txt
 
 echo "Creating Datastore entities"
 python add_entities.py
