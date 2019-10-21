@@ -47,34 +47,17 @@ const kind = 'Question';
 // END TODO
 
 
-// Lists all questions in a Quiz (defaults to 'gcp').
-// Returns a promise
-// [START list]
-function list(quiz = 'gcp') {
-  // Placeholder statement
-  return Promise.resolve({
-    questions: [{
-      id: -1,
-      title: 'Dummy question',
-      answer1: 'Dummy answer1',
-      answer2: 'Dummy answer2',
-      answer3: 'Dummy answer3',
-      answer4: 'Dummy answer4',
-      correctAnswer: 2
-    }],
-    nextPageToken: 'NO_MORE_RESULTS'
-  });
-}
-// [END list]
+// TODO: Remove Placeholder statement
 
+//return Promise.resolve({});
 
-  // BONUS TODO: Create the query
-  // The Datastore client has a ds.createQuery() method that   
-  // allows you to specify the kind(s) of entities to be 
-  // retrieved.
-  // The query can be customized to filter the Question 
-  // entities for one quiz.
-// [START create]
+// END TODO
+
+// The create({quiz, author, title, answer1, answer2,
+// answer3, answer4, correctAnswer}) function uses an
+// ECMAScript 2015 destructuring assignment to extract
+// properties from the form data passed to the function
+
 function create({ quiz, author, title, answer1, answer2, answer3, answer4, correctAnswer }) {
 
  // TODO: Declare the entity key,
@@ -84,10 +67,13 @@ function create({ quiz, author, title, answer1, answer2, answer3, answer4, corre
 
    // END TODO
 
-   // TODO: Declare the entity object, with the key and data
+      // TODO: Declare the entity object, with the key and data
 
   const entity = {
     key,
+
+ // END TODO
+
 // The entity's members are represented in a data property.
 // This is an array where each element represents one
 // member in the entity. Each element is an object with a // name and a value  
@@ -113,7 +99,94 @@ function create({ quiz, author, title, answer1, answer2, answer3, answer4, corre
   // END TODO
 }
 
-// [END create]
+// Lists all questions in a Quiz (defaults to 'gcp').
+// Returns a promise
+// [START list]
+function list(quiz = 'gcp') {
+  // Placeholder statement
+  return Promise.resolve({
+    questions: [{
+      id: -1,
+      title: 'Dummy question',
+      answer1: 'Dummy answer1',
+      answer2: 'Dummy answer2',
+      answer3: 'Dummy answer3',
+      answer4: 'Dummy answer4',
+      correctAnswer: 2
+    }],
+    nextPageToken: 'NO_MORE_RESULTS'
+  });
+}
+// END TODO
+
+// BONUS TODO: Create the query
+  // The Datastore client has a ds.createQuery() method that   
+  // allows you to specify the kind(s) of entities to be 
+  // retrieved.
+  // The query can be customized to filter the Question 
+  // entities for one quiz.
+
+
+
+
+  // END TODO
+
+  // BONUS TODO: Execute the query
+  // The ds.runQuery() method returns a Promise as it runs 
+  // asynchronously
+
+
+
+  // END TODO
+
+  // TODO: Return the transformed results
+  // Cloud Datastore returns the query response as an array. 
+  // The first element references the data, the second 
+  // contains an object indicating if there are more results 
+  // and provides a token to paginate through the results. 
+
+
+  // TODO: For each question returned from Datastore
+
+
+  // TODO: Add in an id property using the Entity id
+  // The reason that we need to do this is that we want to 
+  // know which question a student has answered (using the 
+  // Entity's key gives a unique id) and to avoid giving the 
+  // answer away in the JSON data.
+  // Cloud Datastore references an entity's key using an 
+  // ECMAScript symbol named Datastore.KEY. 
+  // One way to reshape the data is to use the JavaScript
+  // array map(...) method to apply the modification to each 
+  // element in the array.
+
+
+
+  // TODO: Remove the correctAnswer property
+
+
+  // END TODO
+
+  // TODO: return the transformed item
+
+
+  // END TODO
+
+
+  // Reshape the data
+
+
+  // TODO: Return the questions
+
+  // TODO: Return a property to allow the client
+  // to request the next page of results
+
+  // This will  pass the set of transformed entities back 
+  // from the model to the client - in this case the Quiz 
+  // application's API
+
+// [END list]
+
 
 // [START exports]
 module.exports = {
