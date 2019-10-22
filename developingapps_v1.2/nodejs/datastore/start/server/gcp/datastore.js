@@ -1,3 +1,4 @@
+//START
 // Copyright 2017, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,14 +45,21 @@
 
 // END TODO
 
-
-// [START create]
-function create({ quiz, author, title, answer1, answer2, answer3, answer4, correctAnswer }) {
-  // TODO: Remove Placeholder statement
+// TODO: Remove Placeholder statement
 
   return Promise.resolve({});
 
   // END TODO
+
+// The create({quiz, author, title, answer1, answer2,
+// answer3, answer4, correctAnswer}) function uses an
+// ECMAScript 2015 destructuring assignment to extract
+// properties from the form data passed to the function
+
+
+function create({ quiz, author, title, answer1, answer2, answer3, answer4, correctAnswer }) {
+
+
 
   // TODO: Declare the entity key, 
   // with a Datastore generated id
@@ -63,7 +71,24 @@ function create({ quiz, author, title, answer1, answer2, answer3, answer4, corre
   // TODO: Declare the entity object, with the key and data
 
 
+
   // END TODO
+
+// The entity's members are represented in a data property.
+// This is an array where each element represents one
+// member in the entity. Each element is an object with a // name and a value
+
+
+
+
+
+
+
+
+
+
+
+// END TODO
 
   // TODO: Save the entity, return a promise
   // The ds.save(...) method returns a Promise to the  
@@ -72,10 +97,15 @@ function create({ quiz, author, title, answer1, answer2, answer3, answer4, corre
 
 
   // END TODO
-
 }
-// [END create]
 
+// TODO: Save the entity, return a promise
+// The ds.save(...) method returns a Promise to the
+// caller, as it runs asynchronously.
+
+
+
+// END TODO
 
 // Lists all questions in a Quiz (defaults to 'gcp').
 // Returns a promise
