@@ -133,7 +133,7 @@ function sendUploadToGCS(req, res, next) {
   // END TODO
 
 
-  // TODO: Upload the file's data into Cloud Storage
+  // TODO: End the stream to upload the file's data
 
 
 
