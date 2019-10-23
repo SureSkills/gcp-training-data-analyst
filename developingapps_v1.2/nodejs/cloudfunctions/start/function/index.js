@@ -26,13 +26,11 @@
 
 exports.subscribe = function subscribe(event) {
   // The Cloud Pub/Sub Message object.
-  const pubsubMessage = event.data;
-
   // TODO: Decode the Cloud Pub/Sub message
   // extracting the feedbackObject data
   // The message received from Pub/Sub is base64 encoded, and 
   // the data submitted by students is in a data property
-
+  const pubsubMessage = event.data;
 
 
   // END TODO
